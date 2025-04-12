@@ -1,0 +1,110 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+
+enum Role {
+  CLIENT
+  ENTREPRISE
+}
+
+model User{
+  id   Int @id @default(autoincrement())
+  username   String
+  email String
+  password String
+  role Role 
+  orders Orders[]
+  Shop Shop[]
+
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("t_user")
+
+}
+
+
+model Product{
+  id Int @id @default(autoincrement())
+  libelle String
+  stock Int
+
+  shopId Int 
+  shop Shop @relation(fields: [shopId], references: [id])
+
+  dateExpire DateTime 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  ordersProduct OrdersProduct[]
+
+  @@map("t_product")
+}
+
+
+model Shop{
+  id Int @id @default(autoincrement())
+  name String
+  adresse String
+  ville String
+  Pays String
+  latitude   Float?
+  longitude  Float?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  userId Int
+  user User @relation(fields: [userId], references: [id])
+
+  product Product[]
+
+  @@map("t_shop")
+}
+
+
+model Orders{
+  id Int @id @default(autoincrement())
+  userId Int 
+ 
+  quantite Int
+  prix Int 
+  user User @relation(fields: [userId], references: [id])
+ 
+
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  ordersProduct OrdersProduct[]
+
+  @@map("t_orders") 
+}
+
+
+
+model OrdersProduct{
+  id Int @id @default(autoincrement())
+
+  productId Int
+  product Product @relation(fields: [productId], references: [id])
+
+  ordersId Int
+  orders Orders @relation(fields: [ordersId], references: [id])
+  
+
+  @@map("t_orders_product")
+}
+
