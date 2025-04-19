@@ -12,11 +12,12 @@ export class AuthService {
 
   async signIn(username: string, pass: string): Promise<any> {
 
+    
     const user = await this.prismaService.user.findUnique({
       where: { username: username },
     });
 
-    
+
     if (user?.password !== pass) {
       throw new UnauthorizedException();
     }
