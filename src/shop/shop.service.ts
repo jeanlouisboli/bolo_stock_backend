@@ -1,26 +1,27 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateShopDto } from './dto/create-shop.dto';
 import { UpdateShopDto } from './dto/update-shop.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { take } from 'rxjs';
 
 @Injectable()
 export class ShopService {
-  
-  constructor(private prismaService: PrismaService){}
+
+  constructor(private prismaService: PrismaService) { }
 
   async create(createShopDto: CreateShopDto) {
 
 
     const user = await this.prismaService.user.create({
-      data:{
-        username:createShopDto.email,
-        email:createShopDto.email,
-        role:"ENTREPRISE"
+      data: {
+        username: createShopDto.email,
+        email: createShopDto.email,
+        role: "ENTREPRISE"
       }
     })
-    const shop =  await this.prismaService.shop.create({
-      
-      data:{
+    const shop = await this.prismaService.shop.create({
+
+      data: {
 
         name: createShopDto.name,
         email: createShopDto.email,
@@ -35,31 +36,41 @@ export class ShopService {
 
     })
     return createShopDto;
-    
+
   }
 
-  findAll() {
-    return this.prismaService.shop.findMany();
-  }
+   findAll(page= 1, limit=10 ) {
 
-  findOne(id: number) {
-    return this.prismaService.shop.findUnique({
-      where:{
-        id: id
-      }
+    return this.prismaService.shop.findMany({
+     skip: (page - 1) * limit,
+     take: limit
     });
-    
+
+
   }
 
-  update(id: number, updateShopDto: UpdateShopDto) {
-    return this.prismaService.shop.update({
+  async findOne(id: number) {
+
+    const shop = await this.prismaService.shop.findUnique({ where: { id } });
+
+    if (!shop) throw new NotFoundException();
+
+
+
+  }
+
+  async update(id: number, updateShopDto: UpdateShopDto) {
+
+    const shopUpdate = await  this.prismaService.shop.update({
       where: {
         id: id
       },
-      data:{
-        
+      data: {
+
       }
     });
+
+    return shopUpdate
   }
 
   async softDeleteShop(id: number) {

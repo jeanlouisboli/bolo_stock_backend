@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Query } from '@nestjs/common';
 import { ShopService } from './shop.service';
 import { CreateShopDto } from './dto/create-shop.dto';
 import { UpdateShopDto } from './dto/update-shop.dto';
@@ -10,25 +10,22 @@ export class ShopController {
 
   @Post()
   create(@Body() createShopDto: CreateShopDto) {
-
-   
-
     return this.shopService.create(createShopDto);
   }
 
   @Get()
-  findAll() {
-    return this.shopService.findAll();
+  findAll(@Query('page') page?:number, @Query('limit') limit?:number) {
+    return this.shopService.findAll(page, limit);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.shopService.findOne(+id);
+  findOne(@Param('id',ParseIntPipe) id: number) {
+    return this.shopService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateShopDto: UpdateShopDto) {
-    return this.shopService.update(+id, updateShopDto);
+  update(@Param('id',ParseIntPipe) id: number, @Body() updateShopDto: UpdateShopDto) {
+    return this.shopService.update(id, updateShopDto);
   }
 
   @Delete('id')
