@@ -19,7 +19,9 @@ export class ShopService {
       }
     })
     const shop =  await this.prismaService.shop.create({
+      
       data:{
+
         name: createShopDto.name,
         email: createShopDto.email,
         adresse: createShopDto.adresse,
@@ -28,7 +30,11 @@ export class ShopService {
         latitude: createShopDto.latitude,
         longitude: createShopDto.longitude,
         userId: user.id
+
+        
       }
+
+
     })
     return createShopDto;
     
