@@ -30,8 +30,6 @@ export class ShopService {
         latitude: createShopDto.latitude,
         longitude: createShopDto.longitude,
         userId: user.id
-
-        
       }
 
 
@@ -41,18 +39,35 @@ export class ShopService {
   }
 
   findAll() {
-    return `This action returns all shop`;
+    return this.prismaService.shop.findMany();
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} shop`;
+    return this.prismaService.shop.findUnique({
+      where:{
+        id: id
+      }
+    });
+    
   }
 
   update(id: number, updateShopDto: UpdateShopDto) {
-    return `This action updates a #${id} shop`;
+    return this.prismaService.shop.update({
+      where: {
+        id: id
+      },
+      data:{
+        
+      }
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} shop`;
+  async softDeleteShop(id: number) {
+    return this.prismaService.shop.update({
+      where: { id },
+      data: {
+        deleteAt: new Date(), // Marque comme supprimé
+      },
+    });
   }
 }
