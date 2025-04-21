@@ -48,6 +48,7 @@ model Shop{
   longitude  Float?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+  deletedAt DateTime?
 
   userId Int?
   user User? @relation(fields: [userId], references: [id])
@@ -70,6 +71,7 @@ model Product{
   dateExpire DateTime 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  deletedAt DateTime?
  
   Orders Orders[]
 
@@ -99,6 +101,7 @@ model Orders{
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  deletedAt DateTime?
 
  
 

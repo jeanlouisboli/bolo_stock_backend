@@ -1,7 +1,7 @@
 import { IsString } from "class-validator"
 
 
-export class CreateAuthDto {
+export class LoginAuthDto {
 
     @IsString({message:"Le champs Username doit être une chaine de caratère"})
     username: string
