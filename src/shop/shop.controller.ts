@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Query, UseGuards } from '@nestjs/common';
 import { ShopService } from './shop.service';
 import { CreateShopDto } from './dto/create-shop.dto';
 import { UpdateShopDto } from './dto/update-shop.dto';
@@ -13,9 +13,14 @@ export class ShopController {
     return this.shopService.create(createShopDto);
   }
 
+  
   @Get()
   findAll(@Query('page') page?:number, @Query('limit') limit?:number) {
-    return this.shopService.findAll(page, limit);
+
+    const parsedPage = page ? Number(page) : undefined;
+    const parsedLimit = limit ? Number(limit) : undefined;
+
+    return this.shopService.findAll(parsedPage, parsedLimit);
   }
 
   @Get(':id')
@@ -28,7 +33,7 @@ export class ShopController {
     return this.shopService.update(id, updateShopDto);
   }
 
-  @Delete('id')
+  @Delete(':id')
   remove(@Param('id',ParseIntPipe) id: number) {
     return this.shopService.softDeleteShop(id);
   }
