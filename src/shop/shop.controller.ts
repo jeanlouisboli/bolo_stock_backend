@@ -8,6 +8,7 @@ export class ShopController {
 
   constructor(private readonly shopService: ShopService) {}
 
+
   @Post()
   create(@Body() createShopDto: CreateShopDto) {
     return this.shopService.create(createShopDto);
@@ -23,15 +24,18 @@ export class ShopController {
     return this.shopService.findAll(parsedPage, parsedLimit);
   }
 
+
   @Get(':id')
   findOne(@Param('id',ParseIntPipe) id: number) {
     return this.shopService.findOne(id);
   }
 
+
   @Patch(':id')
   update(@Param('id',ParseIntPipe) id: number, @Body() updateShopDto: UpdateShopDto) {
     return this.shopService.update(id, updateShopDto);
   }
+
 
   @Delete(':id')
   remove(@Param('id',ParseIntPipe) id: number) {
