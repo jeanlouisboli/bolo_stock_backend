@@ -12,6 +12,7 @@ export class AuthService {
 
   constructor(private prismaService: PrismaService, private jwtService: JwtService, private  configService: ConfigService){}
 
+
   async validateUser(username: string, password: string): Promise<User | null> {
     const user = await this.prismaService.user.findUnique({ where: { username } });
   
@@ -21,10 +22,6 @@ export class AuthService {
   
     return user;
   }
-
-
- 
-
 
   async generateTempToken(userId: number, name:string, expiresIn:string): Promise<string> {
     return this.jwtService.signAsync(
