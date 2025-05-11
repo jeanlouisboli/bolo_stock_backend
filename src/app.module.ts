@@ -8,9 +8,13 @@ import { OrdersModule } from './orders/orders.module';
 import { CartModule } from './cart/cart.module';
 import { AuthModule } from './auth/auth.module';
 import { ShopModule } from './shop/shop.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [PrismaModule, UsersModule, ProductsModule, OrdersModule, CartModule, AuthModule, ShopModule],
+  imports: [
+    PrismaModule, UsersModule, ProductsModule, OrdersModule, CartModule, AuthModule, ShopModule,
+    ConfigModule.forRoot({ isGlobal: true })
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
