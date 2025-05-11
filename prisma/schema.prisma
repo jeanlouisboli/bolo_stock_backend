@@ -39,6 +39,8 @@ model User{
 
 model Shop{
   id Int @id @default(autoincrement())
+  username   String @unique
+  password String
   name String
   email String 
   adresse String
