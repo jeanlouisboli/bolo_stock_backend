@@ -10,6 +10,8 @@ export class AuthService {
 
   constructor(private prismaService: PrismaService, private jwtService: JwtService){}
 
+
+  
   async signIn(username: string, pass: string): Promise<any> {
 
     const user = await this.prismaService.user.findUnique({
