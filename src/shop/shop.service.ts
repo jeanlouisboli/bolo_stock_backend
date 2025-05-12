@@ -4,6 +4,7 @@ import { UpdateShopDto } from './dto/update-shop.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { take } from 'rxjs';
 import { AuthService } from 'src/auth/auth.service';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class ShopService {
@@ -19,6 +20,7 @@ export class ShopService {
       OR: [
         { email: createShopDto.email },
         { name: createShopDto.name },
+        { username: createShopDto.username },
       ],
     },
   });
@@ -31,7 +33,14 @@ export class ShopService {
     } else if (existingUser.name === createShopDto.name) {
       throw new ConflictException('Ce nom d’entreprise est déjà utilisé.');
     }
+    else if (existingUser.username === createShopDto.username) {
+      throw new ConflictException('Ce username  est déjà utilisé.');
+    }
+    
   }
+
+
+  const hashedPassword = await bcrypt.hash(createShopDto.password, 10);
 
     const user = await this.prismaService.user.create({
       data: {
@@ -45,6 +54,8 @@ export class ShopService {
 
       data: {
 
+        username : createShopDto.username,
+        password: hashedPassword,
         name: createShopDto.name,
         email: createShopDto.email,
         adresse: createShopDto.adresse,
@@ -60,7 +71,7 @@ export class ShopService {
 
     return {
       message: 'Entreprise et utilisateur créés',
-      token, // envoyer ce token au frontend
+      shop, // envoyer ce token au frontend
     };
 
   }

@@ -39,15 +39,16 @@ model User{
 
 model Shop{
   id Int @id @default(autoincrement())
-  username   String @unique
-  password String
   name String
-  email String 
+  type_commerce String
   adresse String
+  email String 
   ville String
   pays String
   latitude   Float?
   longitude  Float?
+  username   String? @unique
+  password String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   deletedAt DateTime?

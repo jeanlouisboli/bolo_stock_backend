@@ -10,6 +10,8 @@ export class ShopController {
 
   @Post()
   create(@Body() createShopDto: CreateShopDto) {
+    
+    console.log(createShopDto)
     return this.shopService.create(createShopDto);
   }
 
