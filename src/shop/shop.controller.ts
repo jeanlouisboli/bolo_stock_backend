@@ -16,12 +16,8 @@ export class ShopController {
     return this.shopService.create(createShopDto);
   }
 
-
-
   @Post("/:id/add-location")
   addLocationShop(@Param('id',ParseIntPipe) id: number, @Body() addLocationShopDto: AddLocationShopDto ) {
-    
-  
     
     return this.shopService.addLocationShop(id,addLocationShopDto);
   }
