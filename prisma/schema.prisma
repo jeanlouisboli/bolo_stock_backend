@@ -41,12 +41,15 @@ model User{
 model Shop{
   id Int @id @default(autoincrement())
   name String
-  email String 
+  type_commerce String
   adresse String
-  ville String
   pays String
+  ville String
+  email String 
   latitude   Float?
   longitude  Float?
+  username   String? @unique
+  password String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   deletedAt DateTime?
@@ -63,9 +66,13 @@ model Shop{
 model Product{
   id Int @id @default(autoincrement())
   libelle String
-  stock Int
+  description String
+  categorie String
   prix Int
-
+  prixPromo Int
+  remise Int
+  stock Int
+  seuil Int
   shopId Int 
   shop Shop @relation(fields: [shopId], references: [id])
 

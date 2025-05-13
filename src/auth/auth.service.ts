@@ -5,27 +5,31 @@ import { JwtService } from '@nestjs/jwt';
 import { CreateCartDto } from 'src/cart/dto/create-cart.dto';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
-import { User } from '@prisma/client';
+import { Shop, User } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
 
+
   constructor(private prismaService: PrismaService, private jwtService: JwtService, private  configService: ConfigService){}
 
-
-  async validateUser(username: string, password: string): Promise<User | null> {
-    const user = await this.prismaService.user.findUnique({ where: { username } });
+  async validateUser(username: string, password: string): Promise<Shop | null> {
+    const shop = await this.prismaService.shop.findUnique({ where: { username } });
   
-    if (!user || !(await bcrypt.compare(password, user.password))) {
+    if (!shop || !(await bcrypt.compare(password, shop.password))) {
       return null;
     }
   
-    return user;
+    return shop;
   }
 
-  async generateTempToken(userId: number, name:string, expiresIn:string): Promise<string> {
+
+ 
+
+
+  async generateTempToken(shopId: number, name:string, expiresIn:string): Promise<string> {
     return this.jwtService.signAsync(
-      { userId: userId , name: name},
+      { shopId: shopId , name: name},
       {
         secret: this.configService.get('JWT_SECRET'),
         expiresIn: expiresIn,
