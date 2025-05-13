@@ -42,9 +42,9 @@ model Shop{
   name String
   type_commerce String
   adresse String
-  email String 
-  ville String
   pays String
+  ville String
+  email String 
   latitude   Float?
   longitude  Float?
   username   String? @unique
@@ -65,9 +65,13 @@ model Shop{
 model Product{
   id Int @id @default(autoincrement())
   libelle String
-  stock Int
+  description String
+  categorie String
   prix Int
-
+  prixPromo Int
+  remise Int
+  stock Int
+  seuil Int
   shopId Int 
   shop Shop @relation(fields: [shopId], references: [id])
 

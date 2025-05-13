@@ -5,6 +5,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { take } from 'rxjs';
 import { AuthService } from 'src/auth/auth.service';
 import * as bcrypt from 'bcrypt';
+import { AddLocationShopDto } from './dto/add-location-shop.dto';
 
 @Injectable()
 export class ShopService {
@@ -14,77 +15,79 @@ export class ShopService {
   async create(createShopDto: CreateShopDto) {
 
     // Vérifie si un utilisateur avec cet email ou username existe déjà
-  const existingUser = await this.prismaService.shop.findFirst({
-    where: {
-      deletedAt:null,
-      OR: [
-        { email: createShopDto.email },
-        { name: createShopDto.name },
-        { username: createShopDto.username },
-      ],
-    },
-  });
+    const existingUser = await this.prismaService.shop.findFirst({
+      where: {
+        deletedAt: null,
+        OR: [
+          { email: createShopDto.email },
+          { name: createShopDto.name },
+          { username: createShopDto.username },
+        ],
+      },
+    });
 
-  if (existingUser) {
-    if (existingUser.email === createShopDto.email && existingUser.name === createShopDto.name) {
-      throw new ConflictException("Cet email et ce nom d'entreprise sont déjà utilisés.");
-    } else if (existingUser.email === createShopDto.email) {
-      throw new ConflictException('Cet email est déjà utilisé.');
-    } else if (existingUser.name === createShopDto.name) {
-      throw new ConflictException('Ce nom d’entreprise est déjà utilisé.');
-    }
-    else if (existingUser.username === createShopDto.username) {
-      throw new ConflictException('Ce username  est déjà utilisé.');
-    }
-    
-  }
-
-
-  const hashedPassword = await bcrypt.hash(createShopDto.password, 10);
-
-    const user = await this.prismaService.user.create({
-      data: {
-        username: createShopDto.email,
-        email: createShopDto.email,
-        role: "ENTREPRISE"
+    if (existingUser) {
+      if (existingUser.email === createShopDto.email && existingUser.name === createShopDto.name) {
+        throw new ConflictException("Cet email et ce nom d'entreprise sont déjà utilisés.");
+      } else if (existingUser.name === createShopDto.name) {
+        throw new ConflictException('Ce nom d’entreprise est déjà utilisé.');
+      } else if (existingUser.email === createShopDto.email) {
+        throw new ConflictException('Cet email est déjà utilisé.');
       }
-    })
-    
+      else if (existingUser.username === createShopDto.username) {
+        throw new ConflictException('Ce username  est déjà utilisé.');
+      }
+
+    }
+
+
+    const hashedPassword = await bcrypt.hash(createShopDto.password, 10);
+
+    // const user = await this.prismaService.user.create({
+    //   data: {
+    //     username: createShopDto.email,
+    //     email: createShopDto.email,
+    //     role: "ENTREPRISE"
+    //   }
+    // })
+
     const shop = await this.prismaService.shop.create({
 
       data: {
-
-        username : createShopDto.username,
-        password: hashedPassword,
         name: createShopDto.name,
+        type_commerce: createShopDto.type_commerce,
         email: createShopDto.email,
         adresse: createShopDto.adresse,
         ville: createShopDto.ville,
         pays: createShopDto.pays,
+        // username : createShopDto.username,
+        password: hashedPassword,
+
         latitude: createShopDto.latitude,
         longitude: createShopDto.longitude,
-        userId: user.id
+
       }
     })
 
-    const token = await this.authService.generateTempToken(user.id,shop.name,"5m"); // expire dans 5 min
+    const token = await this.authService.generateTempToken(shop.id, shop.name, "5m"); // expire dans 5 min
 
     return {
-      message: 'Entreprise et utilisateur créés',
-      shop, // envoyer ce token au frontend
+      message: 'Entreprise créé',
+      shop,
+      token // envoyer ce token au frontend
     };
 
   }
 
   async findAll(page?: number, limit?: number) {
     const where = { deletedAt: null };
-  
+
     // Si pas de pagination → renvoyer tous les shops
     if (!page || !limit) {
       const data = await this.prismaService.shop.findMany({ where });
       return { data, total: data.length, page: 1, limit: data.length, lastPage: 1 };
     }
-  
+
     const [data, total] = await Promise.all([
       this.prismaService.shop.findMany({
         where,
@@ -93,7 +96,7 @@ export class ShopService {
       }),
       this.prismaService.shop.count({ where }),
     ]);
-  
+
     return {
       data,
       total,
@@ -102,7 +105,7 @@ export class ShopService {
       lastPage: Math.ceil(total / limit),
     };
   }
-  
+
 
   async findOne(id: number) {
 
@@ -111,6 +114,26 @@ export class ShopService {
     if (!shop) throw new NotFoundException();
 
     return shop;
+
+  }
+
+
+  async addLocationShop(id: number, addLocationShop: AddLocationShopDto) {
+
+    const shop = await this.prismaService.shop.findUnique({ where: { id } });
+
+    if (!shop) throw new NotFoundException("Le super marché n'existe pas");
+
+
+    const updadeShop = this.prismaService.shop.update({
+      where: { id },
+      data: {
+        longitude: addLocationShop.longitude,
+        latitude: addLocationShop.latitude,
+      },
+    });
+
+   return updadeShop
 
   }
 
@@ -123,7 +146,7 @@ export class ShopService {
 
     const existingUser = await this.prismaService.shop.findFirst({
       where: {
-        deletedAt:null,
+        deletedAt: null,
         id: {
           not: id, // exclure l'élément en cours d'édition
         },
@@ -133,7 +156,7 @@ export class ShopService {
         ],
       },
     });
-  
+
     if (existingUser) {
       if (existingUser.email === updateShopDto.email && existingUser.name === updateShopDto.name) {
         throw new ConflictException("Cet email et ce nom d'entreprise sont déjà utilisés.");

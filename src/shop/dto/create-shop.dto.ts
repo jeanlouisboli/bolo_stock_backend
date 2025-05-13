@@ -75,7 +75,7 @@ import {
     /**
      * Mot de passe (obligatoire, minimum 6 caractères recommandé)
      */
-    @IsOptional()
+  
     @IsString({ message: 'Le mot de passe est requis.' })
     @MinLength(6, { message: 'Le mot de passe doit contenir au moins 6 caractères.' })
     password: string;
