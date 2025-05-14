@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
    
     IsNumber,
@@ -16,7 +17,7 @@ import {
     /**
      * Longitude GPS du commerce (optionnelle)
      */
-  
+    @ApiProperty()
     @IsNumber({}, { message: 'La longitude doit être un nombre.' })
     @IsLongitude({ message: 'La longitude doit être valide.' })
     longitude: number;
@@ -25,7 +26,7 @@ import {
     /**
      * Latitude GPS du commerce (optionnelle)
      */
-   
+    @ApiProperty()
     @IsNumber({}, { message: 'La latitude doit être un nombre.' })
     @IsLatitude({ message: 'La latitude doit être valide.' })
     latitude: number;

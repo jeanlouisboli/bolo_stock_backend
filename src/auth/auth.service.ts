@@ -13,7 +13,7 @@ export class AuthService {
 
   constructor(private prismaService: PrismaService, private jwtService: JwtService, private  configService: ConfigService){}
 
-  async validateUser(username: string, password: string): Promise<Shop | null> {
+  async validatShop(username: string, password: string): Promise<Shop | null> {
     const shop = await this.prismaService.shop.findUnique({ where: { username } });
   
     if (!shop || !(await bcrypt.compare(password, shop.password))) {
