@@ -20,25 +20,9 @@ enum Role {
   ADMIN
 }
 
-model User{
-  id   Int @id @default(autoincrement())
-  username   String @unique
-  email String @unique
-  password String?
-  role Role 
-  orders Orders[]
-  Shop Shop[]
 
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  deletedAt  DateTime?
-
-  @@map("t_user")
-
-}
-
-model Shop{
+model Partenaire{
   id Int @id @default(autoincrement())
   name String
   type_commerce String
@@ -54,27 +38,47 @@ model Shop{
   updatedAt  DateTime @updatedAt
   deletedAt DateTime?
 
-  userId Int?
-  user User? @relation(fields: [userId], references: [id])
+  
 
   product Product[]
+  Promotion Promotion[]
 
-  @@map("t_shop")
+  @@map("t_partenaire")
 }
-
 
 model Product{
   id Int @id @default(autoincrement())
   libelle String
   description String
+
+  partenaireId Int 
+  partenaire Partenaire @relation(fields: [partenaireId], references: [id])
+
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+ 
+  Promotion Promotion[]
+
+  @@map("t_product")
+}
+
+
+model Promotion{
+  id Int @id @default(autoincrement())
   categorie String
   prix Int
   prixPromo Int
   remise Int
   stock Int
   seuil Int
-  shopId Int 
-  shop Shop @relation(fields: [shopId], references: [id])
+  partenaireId Int 
+  partenaire Partenaire @relation(fields: [partenaireId], references: [id])
+
+  productId Int 
+  product Product @relation(fields: [productId], references: [id])
+
 
   dateExpire DateTime 
   createdAt DateTime @default(now())
@@ -82,21 +86,19 @@ model Product{
   deletedAt DateTime?
  
   Orders Orders[]
+  
 
-  @@map("t_product")
+  @@map("t_promotion")
 }
-
-
 
 
 model Orders{
   id Int @id @default(autoincrement())
 
-  userId Int 
-  user User @relation(fields: [userId], references: [id])
+ 
 
-  productId Int
-  product Product @relation(fields: [productId], references: [id])
+  promotionId Int
+  promotion Promotion @relation(fields: [promotionId], references: [id])
 
   quantite Int
   prix Int 

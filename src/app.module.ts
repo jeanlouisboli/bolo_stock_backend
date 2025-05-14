@@ -7,12 +7,12 @@ import { ProductsModule } from './products/products.module';
 import { OrdersModule } from './orders/orders.module';
 import { CartModule } from './cart/cart.module';
 import { AuthModule } from './auth/auth.module';
-import { ShopModule } from './shop/shop.module';
+import { PartenaireModule } from './Partenaire/Partenaire.module';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
-    PrismaModule, UsersModule, ProductsModule, OrdersModule, CartModule, AuthModule, ShopModule,
+    PrismaModule, UsersModule, ProductsModule, OrdersModule, CartModule, AuthModule, PartenaireModule,
     ConfigModule.forRoot({ isGlobal: true })
   ],
   controllers: [AppController],

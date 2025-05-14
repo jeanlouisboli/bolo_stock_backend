@@ -1,1 +1,1 @@
-export class Shop {}
+export class Partenaire {}

@@ -10,7 +10,7 @@ import {
    * DTO pour la création d'un commerce.
    * Tous les champs sauf latitude et longitude sont obligatoires.
    */
-  export class AddLocationShopDto {
+  export class AddLocationPartenaireDto {
   
 
 

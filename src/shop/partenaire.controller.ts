@@ -10,10 +10,10 @@ import {
   UseGuards,
   Put,
 } from '@nestjs/common';
-import { ShopService } from './shop.service';
-import { CreateShopDto } from './dto/create-shop.dto';
-import { UpdateShopDto } from './dto/update-shop.dto';
-import { AddLocationShopDto } from './dto/add-location-shop.dto';
+import { PartenaireService } from './partenaire.service';
+import { CreatePartenaireDto } from './dto/create-partenaire.dto';
+import { UpdatePartenaireDto } from './dto/update-partenaire.dto';
+import { AddLocationPartenaireDto } from './dto/add-location-partenaire.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import {
   ApiTags,
@@ -25,20 +25,20 @@ import {
   ApiResponse,
 } from '@nestjs/swagger';
 
-@ApiTags('Shop')
-@Controller('shop')
-export class ShopController {
-  constructor(private readonly shopService: ShopService) { }
+@ApiTags('Partenaire')
+@Controller('Partenaire')
+export class PartenaireController {
+  constructor(private readonly PartenaireService: PartenaireService) { }
 
   @Post()
   @ApiOperation({ summary: 'Créer un nouveau magasin' })
   @ApiResponse({ status: 201, description: "Un nouveau partenaire a ete ajoute" })
   @ApiBody({
-    type: CreateShopDto,
-    description: 'Json structure for shop object',
+    type: CreatePartenaireDto,
+    description: 'Json structure for Partenaire object',
   })
-  create(@Body() createShopDto: CreateShopDto) {
-    return this.shopService.create(createShopDto);
+  create(@Body() createPartenaireDto: CreatePartenaireDto) {
+    return this.PartenaireService.create(createPartenaireDto);
   }
 
 
@@ -49,19 +49,21 @@ export class ShopController {
   @ApiOperation({ summary: 'Ajouter une localisation à un magasin' })
   @ApiParam({ name: 'id', type: Number, description: 'ID du magasin' })
   @ApiBody({
-    type: AddLocationShopDto,
+    type: AddLocationPartenaireDto,
     description: 'Json structure for user object',
   })
-  addLocationShop(
+  addLocationPartenaire(
     @Param('id', ParseIntPipe) id: number,
-    @Body() addLocationShopDto: AddLocationShopDto,
+    @Body() addLocationPartenaireDto: AddLocationPartenaireDto,
   ) {
-    return this.shopService.addLocationShop(id, addLocationShopDto);
+    return this.PartenaireService.addLocationPartenaire(id, addLocationPartenaireDto);
   }
 
 
 
+  @UseGuards(JwtAuthGuard)
   @Get()
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Lister tous les magasins (paginés)' })
   @ApiQuery({ name: 'page', required: false, type: Number })
   @ApiQuery({ name: 'limit', required: false, type: Number })
@@ -71,44 +73,47 @@ export class ShopController {
   ) {
     const parsedPage = page ? Number(page) : undefined;
     const parsedLimit = limit ? Number(limit) : undefined;
-    return this.shopService.findAll(parsedPage, parsedLimit);
+    return this.PartenaireService.findAll(parsedPage, parsedLimit);
   }
 
 
-
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Récupérer un magasin par son ID' })
   @ApiParam({ name: 'id', type: Number, description: 'ID du magasin' })
   findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.shopService.findOne(id);
+    return this.PartenaireService.findOne(id);
   }
 
 
-
+  @UseGuards(JwtAuthGuard)
   @Put(':id')
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Mettre à jour un magasin' })
   @ApiParam({ name: 'id', type: Number, description: 'ID du magasin' })
   @ApiBody({
-    type: CreateShopDto,
-    description : 'Json structure for shop object'
+    type: CreatePartenaireDto,
+    description : 'Json structure for Partenaire object'
   })
   update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateShopDto: UpdateShopDto,
+    @Body() updatePartenaireDto: UpdatePartenaireDto,
   ) {
-    return this.shopService.update(id, updateShopDto);
+    return this.PartenaireService.update(id, updatePartenaireDto);
   }
 
 
 
 
-
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Supprimer (soft delete) un magasin' })
   @ApiParam({ name: 'id', type: Number, description: 'ID du magasin' })
   @ApiResponse({status:201, description:"Parteniare supprimé"})
   remove(@Param('id', ParseIntPipe) id: number) {
-    return this.shopService.softDeleteShop(id);
+    return this.PartenaireService.softDeletePartenaire(id);
   }
 
 
