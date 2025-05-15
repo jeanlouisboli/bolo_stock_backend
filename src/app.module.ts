@@ -2,17 +2,17 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PrismaModule } from './prisma/prisma.module';
-import { UsersModule } from './users/users.module';
+
 import { ProductsModule } from './products/products.module';
 import { OrdersModule } from './orders/orders.module';
 import { CartModule } from './cart/cart.module';
 import { AuthModule } from './auth/auth.module';
-import { PartenaireModule } from './Partenaire/Partenaire.module';
+import { PartenaireModule } from './partenaire/partenaire.module';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
-    PrismaModule, UsersModule, ProductsModule, OrdersModule, CartModule, AuthModule, PartenaireModule,
+    PrismaModule,  ProductsModule, OrdersModule, CartModule, AuthModule, PartenaireModule,
     ConfigModule.forRoot({ isGlobal: true })
   ],
   controllers: [AppController],

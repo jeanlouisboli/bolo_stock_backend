@@ -25,8 +25,8 @@ import {
   ApiResponse,
 } from '@nestjs/swagger';
 
-@ApiTags('Partenaire')
-@Controller('Partenaire')
+@ApiTags('partenaire')
+@Controller('partenaire')
 export class PartenaireController {
   constructor(private readonly PartenaireService: PartenaireService) { }
 

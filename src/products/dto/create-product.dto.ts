@@ -11,5 +11,10 @@ export class CreateProductDto {
   @IsString()
   description: string;
 
+
+  @ApiProperty()
+  @IsString()
+  partenaireId: number;
+
  
 }

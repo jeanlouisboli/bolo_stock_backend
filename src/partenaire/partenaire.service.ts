@@ -85,17 +85,17 @@ export class PartenaireService {
 
     // Si pas de pagination → renvoyer tous les Partenaires
     if (!page || !limit) {
-      const data = await this.prismaService.Partenaire.findMany({ where });
+      const data = await this.prismaService.partenaire.findMany({ where });
       return { data, total: data.length, page: 1, limit: data.length, lastPage: 1 };
     }
 
     const [data, total] = await Promise.all([
-      this.prismaService.Partenaire.findMany({
+      this.prismaService.partenaire.findMany({
         where,
         skip: (page - 1) * limit,
         take: limit,
       }),
-      this.prismaService.Partenaire.count({ where }),
+      this.prismaService.partenaire.count({ where }),
     ]);
 
     return {
@@ -110,23 +110,23 @@ export class PartenaireService {
 
   async findOne(id: number) {
 
-    const Partenaire = await this.prismaService.Partenaire.findUnique({ where: { id } });
+    const partenaire = await this.prismaService.partenaire.findUnique({ where: { id } });
 
-    if (!Partenaire) throw new NotFoundException();
+    if (!partenaire) throw new NotFoundException();
 
-    return Partenaire;
+    return partenaire;
 
   }
 
 
   async addLocationPartenaire(id: number, addLocationPartenaire: AddLocationPartenaireDto) {
 
-    const Partenaire = await this.prismaService.Partenaire.findUnique({ where: { id } });
+    const partenaire = await this.prismaService.partenaire.findUnique({ where: { id } });
 
-    if (!Partenaire) throw new NotFoundException("Le super marché n'existe pas");
+    if (!partenaire) throw new NotFoundException("Le super marché n'existe pas");
 
 
-    const updadePartenaire = this.prismaService.Partenaire.update({
+    const updadePartenaire = this.prismaService.partenaire.update({
       where: { id },
       data: {
         longitude: addLocationPartenaire.longitude,
@@ -140,12 +140,12 @@ export class PartenaireService {
 
   async update(id: number, updatePartenaireDto: UpdatePartenaireDto) {
 
-    const Partenaire = await this.prismaService.Partenaire.findUnique({ where: { id } });
+    const Partenaire = await this.prismaService.partenaire.findUnique({ where: { id } });
 
     if (!Partenaire) throw new NotFoundException();
 
 
-    const existingPartenaire = await this.prismaService.Partenaire.findFirst({
+    const existingPartenaire = await this.prismaService.partenaire.findFirst({
       where: {
         deletedAt: null,
         id: {
@@ -170,7 +170,7 @@ export class PartenaireService {
 
 
 
-    const PartenaireUpdate = await this.prismaService.Partenaire.update({
+    const PartenaireUpdate = await this.prismaService.partenaire.update({
       where: {
         id: id
       },
@@ -183,7 +183,7 @@ export class PartenaireService {
   }
 
   async softDeletePartenaire(id: number) {
-    return this.prismaService.Partenaire.update({
+    return this.prismaService.partenaire.update({
       where: { id },
       data: {
         deletedAt: new Date(), // Marque comme supprimé

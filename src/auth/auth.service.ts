@@ -5,7 +5,7 @@ import { JwtService } from '@nestjs/jwt';
 import { CreateCartDto } from 'src/cart/dto/create-cart.dto';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
-import { Partenaire, User } from '@prisma/client';
+import { Partenaire  } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -14,19 +14,19 @@ export class AuthService {
   constructor(private prismaService: PrismaService, private jwtService: JwtService, private  configService: ConfigService){}
 
   async validatPartenaire(username: string, password: string): Promise<Partenaire | null> {
-    const Partenaire = await this.prismaService.Partenaire.findUnique({ where: { username } });
+    const partenaire = await this.prismaService.partenaire.findUnique({ where: { username } });
   
-    if (!Partenaire || !(await bcrypt.compare(password, Partenaire.password))) {
+    if (!partenaire || !(await bcrypt.compare(password, partenaire.password))) {
       return null;
     }
   
-    return Partenaire;
+    return partenaire;
   }
 
 
-  async generateTempToken(PartenaireId: number, name:string, expiresIn:string): Promise<string> {
+  async generateTempToken(partenaireId: number, name:string, expiresIn:string): Promise<string> {
     return this.jwtService.signAsync(
-      { PartenaireId: PartenaireId , name: name},
+      { partenaireId: partenaireId , name: name},
       {
         secret: this.configService.get('JWT_SECRET'),
         expiresIn: expiresIn,
