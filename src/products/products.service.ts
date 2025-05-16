@@ -9,8 +9,7 @@ export class ProductsService {
 
   constructor(private prismaService: PrismaService) { }
 
-  async create(createProductDto: CreateProductDto) {
-
+  async create(createProductDto: CreateProductDto, partenaireId) {
 
      const existingProduct = await this.prismaService.product.findFirst({
           where: {
@@ -29,14 +28,17 @@ export class ProductsService {
     
         }
     
-        const product = await this.prismaService.product.create({
-
+        return this.prismaService.product.create({
           data: {
-            ...createProductDto
-          }
-        })
-
-    return 'This action adds a new product';
+            ...createProductDto,
+            partenaire: {
+              connect: { id: partenaireId },
+            },
+          },
+          include: {
+            partenaire: true,
+          },
+        });
   }
 
   async findAll(page?: number, limit?: number) {
@@ -67,6 +69,8 @@ export class ProductsService {
     };
   }
 
+
+
    async findOne(id: number) {
  
      const product = await this.prismaService.product.findUnique({ where: { id } });
@@ -77,7 +81,7 @@ export class ProductsService {
  
    }
 
-   async update(id: number, updateProductDto: UpdateProductDto) {
+   async update(id: number, updateProductDto: UpdateProductDto, partenaireId) {
   
       const product = await this.prismaService.product.findUnique({ where: { id } });
   
@@ -106,16 +110,23 @@ export class ProductsService {
   
   
   
-      const productUpdate = await this.prismaService.product.update({
+    
+  
+      return this.prismaService.product.update({
         where: {
           id: id
         },
         data: {
-          ...updateProductDto
-        }
+          ...updateProductDto,
+          partenaire: {
+            connect: { id: partenaireId },
+          },
+        },
+        include: {
+          partenaire: true,
+        },
       });
-  
-      return productUpdate
+
     }
 
     async softDeletePartenaire(id: number) {

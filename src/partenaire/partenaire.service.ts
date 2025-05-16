@@ -51,7 +51,7 @@ export class PartenaireService {
     //   }
     // })
 
-    const Partenaire = await this.prismaService.partenaire.create({
+    const partenaire = await this.prismaService.partenaire.create({
 
       data: {
         name: createPartenaireDto.name,
@@ -60,20 +60,19 @@ export class PartenaireService {
         adresse: createPartenaireDto.adresse,
         ville: createPartenaireDto.ville,
         pays: createPartenaireDto.pays,
-        // username : createPartenaireDto.username,
+        username : createPartenaireDto.email,
         password: hashedPassword,
-
         latitude: createPartenaireDto.latitude,
         longitude: createPartenaireDto.longitude,
 
       }
     })
 
-    const token = await this.authService.generateTempToken(Partenaire.id, Partenaire.name, "5m"); // expire dans 5 min
+    const token = await this.authService.generateTempToken(partenaire.id, partenaire.email, "5m"); // expire dans 5 min
 
     return {
       message: 'Entreprise créé',
-      Partenaire,
+      partenaire,
       token // envoyer ce token au frontend
     };
 

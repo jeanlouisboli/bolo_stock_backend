@@ -2,13 +2,19 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UnauthorizedExceptio
 import { AuthService } from './auth.service';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
+import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 
-
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
 
+  @ApiResponse({ status: 201, description: 'auth done !.'})
+  @ApiBody({
+      type: LoginAuthDto,
+      description: 'Json structure for auth object',
+   })
   @Post('login')
   async login(@Body() loginDto: LoginAuthDto) {
   const partenaire = await this.authService.validatPartenaire(loginDto.username, loginDto.password);

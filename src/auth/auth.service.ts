@@ -24,9 +24,9 @@ export class AuthService {
   }
 
 
-  async generateTempToken(partenaireId: number, name:string, expiresIn:string): Promise<string> {
+  async generateTempToken(partenaireId: number, username:string, expiresIn:string): Promise<string> {
     return this.jwtService.signAsync(
-      { partenaireId: partenaireId , name: name},
+      { partenaireId: partenaireId , username: username},
       {
         secret: this.configService.get('JWT_SECRET'),
         expiresIn: expiresIn,
