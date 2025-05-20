@@ -15,7 +15,9 @@ export class ProductsService {
           where: {
             deletedAt: null,
             OR: [
-              { libelle: createProductDto.libelle },
+              { libelle: createProductDto.libelle,
+                partenaireId : partenaireId
+              },
            
             ],
           },
@@ -41,9 +43,9 @@ export class ProductsService {
         });
   }
 
-  async findAll(page?: number, limit?: number) {
+  async findAll(partenaireId, page?: number, limit?: number) {
     
-    const where = { deletedAt: null };
+    const where = { deletedAt: null, partenaireId : partenaireId };
 
     // Si pas de pagination → renvoyer tous les Partenaires
     if (!page || !limit) {
@@ -69,11 +71,9 @@ export class ProductsService {
     };
   }
 
-
-
-   async findOne(id: number) {
+   async findOne(partenaireId,id: number) {
  
-     const product = await this.prismaService.product.findUnique({ where: { id } });
+     const product = await this.prismaService.product.findUnique({ where: { id, partenaireId } });
  
      if (!product) throw new NotFoundException();
  
@@ -81,9 +81,10 @@ export class ProductsService {
  
    }
 
+
    async update(id: number, updateProductDto: UpdateProductDto, partenaireId) {
   
-      const product = await this.prismaService.product.findUnique({ where: { id } });
+      const product = await this.prismaService.product.findUnique({ where: { id,partenaireId } });
   
       if (!product) throw new NotFoundException();
   
@@ -129,9 +130,9 @@ export class ProductsService {
 
     }
 
-    async softDeletePartenaire(id: number) {
+    async softDeletePartenaire(partenaireId,id: number) {
       return this.prismaService.product.update({
-        where: { id },
+        where: { id,partenaireId },
         data: {
           deletedAt: new Date(), // Marque comme supprimé
         },

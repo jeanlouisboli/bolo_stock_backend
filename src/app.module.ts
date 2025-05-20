@@ -9,13 +9,15 @@ import { CartModule } from './cart/cart.module';
 import { AuthModule } from './auth/auth.module';
 import { PartenaireModule } from './partenaire/partenaire.module';
 import { ConfigModule } from '@nestjs/config';
+import { PromotionController } from './promotion/promotion.controller';
+import { PromotionService } from './promotion/promotion.service';
 
 @Module({
   imports: [
     PrismaModule,  ProductsModule, OrdersModule, CartModule, AuthModule, PartenaireModule,
     ConfigModule.forRoot({ isGlobal: true })
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, PromotionController],
+  providers: [AppService, PromotionService],
 })
 export class AppModule {}

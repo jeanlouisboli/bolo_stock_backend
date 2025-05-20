@@ -1,32 +1,35 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Req, Query, ParseIntPipe, UseGuards } from '@nestjs/common';
-import { OrdersService } from './orders.service';
-import { CreateOrderDto } from './dto/create-order.dto';
-import { UpdateOrderDto } from './dto/update-order.dto';
-import { ApiBearerAuth, ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger';
+
+import { ApiBearerAuth, ApiBody, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtUser } from 'src/auth/interface/jwt-user.interface';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
+import { PromotionService } from './promotion.service';
+import { CreatePromotionDto } from './dto/create-promotion.dto';
+import { UpdatePromotionDto } from './dto/update-promotion.dto';
 
+@ApiTags('promotion')
 @UseGuards(AuthGuard('jwt'))
-@Controller('orders')
-export class OrdersController {
-  constructor(private readonly ordersService: OrdersService) {}
+@Controller('promotion')
+export class PromotionController {
+  constructor(private readonly promotionService: PromotionService) {}
+
 
    @ApiBearerAuth()
     @ApiResponse({ status: 201, description: 'The record has been successfully created.'})
     @ApiResponse({ status: 401, description: 'Autorisation requise.'})
     @ApiBody({
-      type: CreateOrderDto,
+      type: CreatePromotionDto,
       description: 'Json structure for order object',
    })
     @Post()
-    create(@Body() CreateOrderDto: CreateOrderDto, @Req() req: Request ) {
+    create(@Body() CreatePromotionDto: CreatePromotionDto, @Req() req: Request ) {
       
       const user = req.user as JwtUser; // typage ici
       const partenaireId = user.partenaireId;
   
   
-      return this.ordersService.create(CreateOrderDto,partenaireId);
+      return this.promotionService.create(CreatePromotionDto,partenaireId);
     }
   
   
@@ -48,7 +51,7 @@ export class OrdersController {
       const partenaireId = user.partenaireId;
   
      // return partenaireId;
-      return this.ordersService.findAll(partenaireId,parsedPage, parsedLimit);
+      return this.promotionService.findAll(partenaireId,parsedPage, parsedLimit);
     }
   
   
@@ -60,10 +63,10 @@ export class OrdersController {
     @Get(':id')
     findOne(@Req() req: Request,@Param('id',ParseIntPipe) id: number) {
   
-      // const user = req.user as JwtUser; // typage ici
-      // const partenaireId = user.partenaireId;
+      const user = req.user as JwtUser; // typage ici
+      const partenaireId = user.partenaireId;
   
-      return this.ordersService.findOne(id);
+      return this.promotionService.findOne(partenaireId,id);
     }
   
   
@@ -73,16 +76,16 @@ export class OrdersController {
     @ApiResponse({ status: 401, description: 'Autorisation requise.'})
     @ApiParam({ name: 'id',required: true, type: Number, description: 'l\id du produit ' })
     @ApiBody({
-      type: CreateOrderDto,
-      description: 'Json structure for product object',
+      type: UpdatePromotionDto,
+      description: 'Json structure for promotion object',
    })
     @Patch(':id')
-    update(@Param('id',ParseIntPipe) id: number, @Body() UpdateOrderDto: UpdateOrderDto, @Req() req: Request) {
+    update(@Param('id',ParseIntPipe) id: number, @Body() UpdateOrderDto: UpdatePromotionDto, @Req() req: Request) {
   
       const user = req.user as JwtUser; // typage ici
       const partenaireId = user.partenaireId;
   
-      return this.ordersService.update(id, UpdateOrderDto,partenaireId);
+      return this.promotionService.update(id, UpdateOrderDto,partenaireId);
     }
   
   
@@ -97,7 +100,7 @@ export class OrdersController {
       const partenaireId = user.partenaireId;
   
   
-      return this.ordersService.softDeleteOrders(partenaireId,id);
+      return this.promotionService.softDeletePromotion(partenaireId,id);
     }
     
 }

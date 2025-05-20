@@ -12,13 +12,15 @@ import { JwtUser } from 'src/auth/interface/jwt-user.interface';
 @ApiTags('products')
 @Controller('products')
 export class ProductsController {
+
+  
   constructor(private readonly productsService: ProductsService) {}
 
   
 
   @ApiBearerAuth()
   @ApiResponse({ status: 201, description: 'The record has been successfully created.'})
-  @ApiResponse({ status: 403, description: 'Autorisation requise.'})
+  @ApiResponse({ status: 401, description: 'Autorisation requise.'})
   @ApiBody({
     type: CreateProductDto,
     description: 'Json structure for product object',
@@ -38,33 +40,43 @@ export class ProductsController {
   @ApiQuery({ name: 'page', required: false, type: Number, description: 'Numéro de page (optionnel)' })
   @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Nombre d\'éléments par page (optionnel)' })
   @ApiResponse({ status: 200, description: 'Liste des produits avec partenaire' })
+  @ApiResponse({ status: 401, description: 'Autorisation requise.'})
   @Get()
-  findAll(
+  findAll(@Req() req: Request,
      @Query('page') page?: number,
-        @Query('limit') limit?: number,
+        @Query('limit') limit?: number, 
   ) {
 
     const parsedPage = page ? Number(page) : undefined;
     const parsedLimit = limit ? Number(limit) : undefined;
+      
+    const user = req.user as JwtUser; // typage ici
+    const partenaireId = user.partenaireId;
 
-    return this.productsService.findAll(parsedPage, parsedLimit);
+   // return partenaireId;
+    return this.productsService.findAll(partenaireId,parsedPage, parsedLimit);
   }
+
 
 
   @ApiBearerAuth()
   @ApiResponse({ status: 201, description: 'The record has been successfully created.'})
-  @ApiResponse({ status: 403, description: 'Autorisation requise.'})
+  @ApiResponse({ status: 401, description: 'Autorisation requise.'})
   @ApiParam({ name: 'id',required: true, type: Number, description: 'l\id du produit ' })
   @Get(':id')
-  findOne(@Param('id',ParseIntPipe) id: number) {
-    return this.productsService.findOne(id);
+  findOne(@Req() req: Request,@Param('id',ParseIntPipe) id: number) {
+
+    const user = req.user as JwtUser; // typage ici
+    const partenaireId = user.partenaireId;
+
+    return this.productsService.findOne(partenaireId,id);
   }
 
 
 
   @ApiBearerAuth()
   @ApiResponse({ status: 201, description: 'The record has been successfully updated.'})
-  @ApiResponse({ status: 403, description: 'Autorisation requise.'})
+  @ApiResponse({ status: 401, description: 'Autorisation requise.'})
   @ApiParam({ name: 'id',required: true, type: Number, description: 'l\id du produit ' })
   @ApiBody({
     type: CreateProductDto,
@@ -82,10 +94,15 @@ export class ProductsController {
 
   @ApiBearerAuth()
   @ApiResponse({ status: 201, description: 'The record has been successfully deleted.'})
-  @ApiResponse({ status: 403, description: 'Autorisation requise.'})
+  @ApiResponse({ status: 401, description: 'Autorisation requise.'})
   @ApiParam({ name: 'id',required: true, type: Number, description: 'l\id du produit ' })
   @Delete(':id')
-  softDeletePartenaire(@Param('id',ParseIntPipe) id: number) {
-    return this.productsService.softDeletePartenaire(id);
+  softDeletePartenaire(@Req() req: Request,@Param('id',ParseIntPipe) id: number) {
+    
+    const user = req.user as JwtUser; // typage ici
+    const partenaireId = user.partenaireId;
+
+
+    return this.productsService.softDeletePartenaire(partenaireId,id);
   }
 }

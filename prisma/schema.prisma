@@ -96,7 +96,6 @@ model Orders{
   id Int @id @default(autoincrement())
 
  
-
   promotionId Int
   promotion Promotion @relation(fields: [promotionId], references: [id])
 
