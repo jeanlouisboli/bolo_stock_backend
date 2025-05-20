@@ -41,10 +41,13 @@ export class CreatePromotionDto {
       @IsNumber()
       seuil:number
 
-      @ApiProperty()
-      @IsDateString()
-      dateExpire: Date
 
-     
+      @ApiProperty()
+      @IsDate()
+      dateDebut: Date
+
+      @ApiProperty()
+      @IsDate()
+      dateExpire: Date
       
 }

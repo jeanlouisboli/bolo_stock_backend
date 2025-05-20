@@ -50,6 +50,7 @@ export class PromotionService {
                 remise: createPromotionDto.remise,
                 stock: createPromotionDto.stock,
                 seuil: createPromotionDto.seuil,
+                dateDebut: createPromotionDto.dateDebut,
                 dateExpire: createPromotionDto.dateExpire,
                 partenaire: {
                     connect: { id: partenaireId },
@@ -147,6 +148,7 @@ export class PromotionService {
                 stock: updatePromotionDto.stock,
                 seuil: updatePromotionDto.seuil,
                 dateExpire: updatePromotionDto.dateExpire,
+                
             },
             include: {
                 partenaire: true,

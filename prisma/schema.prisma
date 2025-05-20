@@ -80,6 +80,7 @@ model Promotion{
   product Product @relation(fields: [productId], references: [id])
 
 
+  dateDebut DateTime
   dateExpire DateTime 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
