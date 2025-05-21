@@ -1,4 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { Type } from "class-transformer";
 import { IsDate, IsDateString, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class CreatePromotionDto {
@@ -44,10 +45,11 @@ export class CreatePromotionDto {
 
       @ApiProperty()
       @IsDate()
+      @Type(()=>Date)
       dateDebut: Date
 
       @ApiProperty()
       @IsDate()
-      dateExpire: Date
-      
+      @Type(()=>Date)
+      dateExpire: Date      
 }

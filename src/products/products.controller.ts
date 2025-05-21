@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query, ParseIntPipe, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query, ParseIntPipe, Req, Put } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -82,7 +82,7 @@ export class ProductsController {
     type: CreateProductDto,
     description: 'Json structure for product object',
  })
-  @Patch(':id')
+  @Put(':id')
   update(@Param('id',ParseIntPipe) id: number, @Body() updateProductDto: UpdateProductDto, @Req() req: Request) {
 
     const user = req.user as JwtUser; // typage ici

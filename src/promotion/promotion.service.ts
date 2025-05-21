@@ -2,6 +2,7 @@ import { ConflictException, Injectable, NotFoundException } from '@nestjs/common
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreatePromotionDto } from './dto/create-promotion.dto';
 import { UpdatePromotionDto } from './dto/update-promotion.dto';
+import { toHtmlDateFormat } from 'src/utils/function';
 
 @Injectable()
 export class PromotionService {
@@ -35,14 +36,12 @@ export class PromotionService {
                         connect: { id: partenaireId },
                     },
                 },
-                include: {
-                    partenaire: true,
-                },
+
             });
         }
 
 
-        return this.prismaService.promotion.create({
+        const promotion =  this.prismaService.promotion.create({
             data: {
                 categorie: createPromotionDto.categorie,
                 prix: createPromotionDto.prix,
@@ -56,7 +55,7 @@ export class PromotionService {
                     connect: { id: partenaireId },
                 },
                 product: {
-                    connect: { id: partenaireId },
+                    connect: { id: existingProduct.id },
                 },
             },
             include: {
@@ -64,6 +63,8 @@ export class PromotionService {
                 product: true
             },
         });
+
+        return promotion;
     }
 
     async findAll(partenaireId, page?: number, limit?: number) {
@@ -81,6 +82,10 @@ export class PromotionService {
                 where,
                 skip: (page - 1) * limit,
                 take: limit,
+                include: {
+                    partenaire: true,
+                    product: true
+                },
             }),
             this.prismaService.promotion.count({ where }),
         ]);
@@ -96,18 +101,26 @@ export class PromotionService {
 
     async findOne(partenaireId, id: number) {
 
-        const promotion = await this.prismaService.product.findUnique({ where: { id, partenaireId } });
+        const promotion = await this.prismaService.promotion.findUnique({ where: { id, partenaireId },include: {
+            partenaire: true,
+            product: true
+        }, });
 
         if (!promotion) throw new NotFoundException();
 
-        return promotion;
+        return {
+            ...promotion,
+            dateDebut : toHtmlDateFormat(promotion.dateDebut),
+            dateExpire : toHtmlDateFormat(promotion.dateExpire)
+        };
 
     }
 
 
     async update(id: number, updatePromotionDto: UpdatePromotionDto, partenaireId) {
 
-        const promotion = await this.prismaService.promotion.findUnique({ where: { id, partenaireId } });
+        let promotion = null;
+         promotion = await this.prismaService.promotion.findUnique({ where: { id, partenaireId } });
 
         if (!promotion) throw new NotFoundException();
 
@@ -132,11 +145,7 @@ export class PromotionService {
 
         // }
 
-
-
-
-
-        return this.prismaService.promotion.update({
+         promotion = this.prismaService.promotion.update({
             where: {
                 id: id
             },
@@ -148,6 +157,7 @@ export class PromotionService {
                 stock: updatePromotionDto.stock,
                 seuil: updatePromotionDto.seuil,
                 dateExpire: updatePromotionDto.dateExpire,
+                updatedAt : new Date()
                 
             },
             include: {
@@ -155,6 +165,13 @@ export class PromotionService {
                 product:true
             },
         });
+
+
+        return {
+            ...promotion,
+            dateDebut : toHtmlDateFormat(promotion.dateDebut),
+            dateExpire : toHtmlDateFormat(promotion.dateExpire)
+        };
 
     }
 

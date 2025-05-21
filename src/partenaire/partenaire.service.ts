@@ -174,7 +174,8 @@ export class PartenaireService {
         id: id
       },
       data: {
-        ...updatePartenaireDto
+        ...updatePartenaireDto,
+        updatedAt : new Date()
       }
     });
 

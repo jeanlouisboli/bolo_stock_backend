@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req, Query, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req, Query, ParseIntPipe, UseGuards, Put } from '@nestjs/common';
 
 import { ApiBearerAuth, ApiBody, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtUser } from 'src/auth/interface/jwt-user.interface';
@@ -76,10 +76,10 @@ export class PromotionController {
     @ApiResponse({ status: 401, description: 'Autorisation requise.'})
     @ApiParam({ name: 'id',required: true, type: Number, description: 'l\id du produit ' })
     @ApiBody({
-      type: UpdatePromotionDto,
+      type: CreatePromotionDto,
       description: 'Json structure for promotion object',
    })
-    @Patch(':id')
+    @Put(':id')
     update(@Param('id',ParseIntPipe) id: number, @Body() UpdateOrderDto: UpdatePromotionDto, @Req() req: Request) {
   
       const user = req.user as JwtUser; // typage ici

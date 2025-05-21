@@ -119,6 +119,7 @@ export class ProductsService {
         },
         data: {
           ...updateProductDto,
+          updatedAt : new Date(),
           partenaire: {
             connect: { id: partenaireId },
           },
