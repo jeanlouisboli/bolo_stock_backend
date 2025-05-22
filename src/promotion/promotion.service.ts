@@ -7,50 +7,63 @@ import { toHtmlDateFormat } from 'src/utils/function';
 @Injectable()
 export class PromotionService {
 
-
-
     constructor(private prismaService: PrismaService) { }
 
     async create(createPromotionDto: CreatePromotionDto, partenaireId) {
 
         let existingProduct = null;
-        existingProduct = await this.prismaService.product.findFirst({
-            where: {
-                deletedAt: null,
-                OR: [
-                    {
-                        libelle: createPromotionDto.libelle,
-                        partenaireId: partenaireId
-                    },
-
-                ],
-            },
-        });
-
-        if (!existingProduct) {
-            existingProduct = this.prismaService.product.create({
-                data: {
-                    libelle: createPromotionDto.libelle,
-                    description: createPromotionDto.description,
-                    partenaire: {
-                        connect: { id: partenaireId },
-                    },
+        if(createPromotionDto.productId)
+        {
+            existingProduct = await this.prismaService.product.findUnique({
+                where: {
+                    deletedAt: null,
+                    id : createPromotionDto.productId,
                 },
-
             });
+
+            if (!existingProduct) throw new NotFoundException();
+
+        }else {
+
+            existingProduct = await this.prismaService.product.findFirst({
+                where: {
+                    deletedAt: null,
+                    OR: [
+                        { libelle: createPromotionDto.libelle,
+                          partenaireId : partenaireId
+                        },
+                     
+                      ],
+                },
+            });
+
+            
+            
+            if(!existingProduct){
+
+                existingProduct = this.prismaService.product.create({
+                    data: {
+                        libelle: createPromotionDto.libelle,
+                        description: createPromotionDto.description,
+                        categorie: createPromotionDto.categorie,
+                        prix: createPromotionDto.prix,
+                        partenaire: {
+                            connect: { id: partenaireId },
+                        },
+                    },
+                });
+            }
+           
         }
 
+       // return existingProduct;
 
         const promotion =  this.prismaService.promotion.create({
             data: {
-                categorie: createPromotionDto.categorie,
-                prix: createPromotionDto.prix,
                 prixPromo: createPromotionDto.prixPromo,
                 remise: createPromotionDto.remise,
                 stock: createPromotionDto.stock,
                 seuil: createPromotionDto.seuil,
-                dateDebut: createPromotionDto.dateDebut,
-                dateExpire: createPromotionDto.dateExpire,
                 partenaire: {
                     connect: { id: partenaireId },
                 },
@@ -125,6 +138,39 @@ export class PromotionService {
         if (!promotion) throw new NotFoundException();
 
 
+        let existingProduct = null;
+        if(updatePromotionDto.productId)
+        {
+            existingProduct = await this.prismaService.product.findFirst({
+                where: {
+                    deletedAt: null,
+                    OR: [
+                        {
+                            libelle: updatePromotionDto.libelle,
+                            partenaireId: partenaireId
+                        },
+    
+                    ],
+                },
+            });
+        }else {
+            existingProduct = this.prismaService.product.create({
+                data: {
+                    libelle: updatePromotionDto.libelle,
+                    description: updatePromotionDto.description,
+                    categorie: updatePromotionDto.categorie,
+                    prix: updatePromotionDto.prix,
+                    partenaire: {
+                        connect: { id: partenaireId },
+                    },
+                    
+                },
+                
+
+            });
+        }
+
+
         // const existingPromotion = await this.prismaService.promotion.findFirst({
         //     where: {
         //         deletedAt: null,
@@ -150,14 +196,15 @@ export class PromotionService {
                 id: id
             },
             data: {
-                categorie: updatePromotionDto.categorie,
-                prix: updatePromotionDto.prix,
                 prixPromo: updatePromotionDto.prixPromo,
                 remise: updatePromotionDto.remise,
                 stock: updatePromotionDto.stock,
                 seuil: updatePromotionDto.seuil,
                 dateExpire: updatePromotionDto.dateExpire,
-                updatedAt : new Date()
+                updatedAt : new Date(),
+                product: {
+                    connect: { id: existingProduct.id },
+                },
                 
             },
             include: {

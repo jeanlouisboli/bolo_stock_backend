@@ -9,12 +9,11 @@ import { Request } from 'express';
 
 
 @ApiTags('orders')
-@UseGuards(AuthGuard('jwt'))
 @Controller('orders')
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
-   @ApiBearerAuth()
+   
     @ApiResponse({ status: 201, description: 'The record has been successfully created.'})
     @ApiResponse({ status: 401, description: 'Autorisation requise.'})
     @ApiBody({
@@ -22,17 +21,13 @@ export class OrdersController {
       description: 'Json structure for order object',
    })
     @Post()
-    create(@Body() CreateOrderDto: CreateOrderDto, @Req() req: Request ) {
+    create(@Body() createOrderDto: CreateOrderDto) {
       
-      const user = req.user as JwtUser; // typage ici
-      const partenaireId = user.partenaireId;
-  
-  
-      return this.ordersService.create(CreateOrderDto,partenaireId);
+      return this.ordersService.create(createOrderDto);
     }
   
   
-    @ApiBearerAuth()
+   
     @ApiQuery({ name: 'page', required: false, type: Number, description: 'Numéro de page (optionnel)' })
     @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Nombre d\'éléments par page (optionnel)' })
     @ApiResponse({ status: 200, description: 'Liste des produits avec partenaire' })
@@ -55,7 +50,7 @@ export class OrdersController {
   
   
   
-    @ApiBearerAuth()
+   
     @ApiResponse({ status: 201, description: 'The record has been successfully created.'})
     @ApiResponse({ status: 401, description: 'Autorisation requise.'})
     @ApiParam({ name: 'id',required: true, type: Number, description: 'l\id du produit ' })

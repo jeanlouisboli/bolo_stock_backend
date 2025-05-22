@@ -11,8 +11,13 @@ export class CreateProductDto {
   @IsString()
   description: string;
 
-  
+  @ApiProperty()
+  @IsString()
+  categorie: string;
 
+  @ApiProperty()
+  @IsNumber()
+  prix: number
 
  
 }

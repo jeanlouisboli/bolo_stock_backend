@@ -34,6 +34,8 @@ model Partenaire{
   longitude  Float?
   username   String? @unique
   password String?
+  approved Boolean?
+  venteTotal Float?
   createdAt  DateTime @default(now())
   updatedAt  DateTime? 
   deletedAt DateTime?
@@ -49,10 +51,11 @@ model Partenaire{
 model Product{
   id Int @id @default(autoincrement())
   libelle String
-  categorie String
+  categorie String?
   description String
-  prix Int
+  prix Int?
   imagePath String? 
+  
   partenaireId Int 
   partenaire Partenaire @relation(fields: [partenaireId], references: [id])
 
@@ -70,12 +73,12 @@ model Product{
 model Promotion{
   id Int @id @default(autoincrement())
   
-  
   prixPromo Int
   remise Int
   stock Int
   seuil Int
   statut Boolean @default(true)
+
   partenaireId Int 
   partenaire Partenaire @relation(fields: [partenaireId], references: [id])
 
@@ -96,21 +99,37 @@ model Promotion{
 }
 
 
+model Client{
+
+  id Int @id @default(autoincrement())
+   nomClient String
+  numeroTelephone String
+  email String @unique
+
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime? 
+  deletedAt DateTime?
+
+
+  Orders Orders[]
+  @@map("t_client")
+
+}
+
 model Orders{
   id Int @id @default(autoincrement())
 
- 
+
+  clientId Int
+  client Client @relation(fields: [clientId], references: [id]) 
+
   promotionId Int
   promotion Promotion @relation(fields: [promotionId], references: [id])
 
   quantite Int
   prix Int 
-
-  nomClient String
-  numeroTelephone String
-  email String
-  
- 
+  montant Float?
 
   createdAt DateTime @default(now())
   updatedAt DateTime? 

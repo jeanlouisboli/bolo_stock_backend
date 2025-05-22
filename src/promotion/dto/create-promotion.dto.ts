@@ -13,18 +13,17 @@ export class CreatePromotionDto {
       description:string
 
       @ApiProperty()
-      @IsOptional()
-      @IsNumber()
-      productId?: number
-
-
-      @ApiProperty()
       @IsString()
       categorie:string
 
       @ApiProperty()
       @IsNumber()
       prix:number
+
+      @ApiProperty()
+      @IsOptional()
+      @IsNumber()
+      productId?: number
 
       @ApiProperty()
       @IsNumber()
@@ -42,14 +41,15 @@ export class CreatePromotionDto {
       @IsNumber()
       seuil:number
 
+      @ApiProperty()
+      @IsDate()
+      @Type(()=>Date)
+      @IsOptional()
+      dateDebut?: Date
 
       @ApiProperty()
       @IsDate()
       @Type(()=>Date)
-      dateDebut: Date
-
-      @ApiProperty()
-      @IsDate()
-      @Type(()=>Date)
-      dateExpire: Date      
+      @IsOptional()
+      dateExpire?: Date      
 }

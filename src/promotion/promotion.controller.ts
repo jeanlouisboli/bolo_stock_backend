@@ -23,13 +23,13 @@ export class PromotionController {
       description: 'Json structure for order object',
    })
     @Post()
-    create(@Body() CreatePromotionDto: CreatePromotionDto, @Req() req: Request ) {
+    create(@Body() createPromotionDto: CreatePromotionDto, @Req() req: Request ) {
       
       const user = req.user as JwtUser; // typage ici
       const partenaireId = user.partenaireId;
   
   
-      return this.promotionService.create(CreatePromotionDto,partenaireId);
+      return this.promotionService.create(createPromotionDto,partenaireId);
     }
   
   
