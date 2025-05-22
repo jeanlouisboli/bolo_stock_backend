@@ -49,8 +49,10 @@ model Partenaire{
 model Product{
   id Int @id @default(autoincrement())
   libelle String
+  categorie String
   description String
-
+  prix Int
+  imagePath String? 
   partenaireId Int 
   partenaire Partenaire @relation(fields: [partenaireId], references: [id])
 
@@ -67,12 +69,13 @@ model Product{
 
 model Promotion{
   id Int @id @default(autoincrement())
-  categorie String
-  prix Int
+  
+  
   prixPromo Int
   remise Int
   stock Int
   seuil Int
+  statut Boolean @default(true)
   partenaireId Int 
   partenaire Partenaire @relation(fields: [partenaireId], references: [id])
 
@@ -80,8 +83,8 @@ model Promotion{
   product Product @relation(fields: [productId], references: [id])
 
 
-  dateDebut DateTime
-  dateExpire DateTime 
+  dateDebut DateTime?
+  dateExpire DateTime? 
   createdAt DateTime @default(now())
   updatedAt DateTime? 
   deletedAt DateTime?

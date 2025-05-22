@@ -2,11 +2,13 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Req, Query, ParseInt
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
-import { ApiBearerAuth, ApiBody, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtUser } from 'src/auth/interface/jwt-user.interface';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 
+
+@ApiTags('orders')
 @UseGuards(AuthGuard('jwt'))
 @Controller('orders')
 export class OrdersController {
