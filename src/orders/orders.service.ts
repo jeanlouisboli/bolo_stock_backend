@@ -113,7 +113,7 @@ export class OrdersService {
     };
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
 
     const product = await this.prismaService.orders.findUnique({ where: { id } });
 
@@ -124,7 +124,7 @@ export class OrdersService {
   }
 
 
-  async update(id: number, updateOrderDto: UpdateOrderDto, partenaireId) {
+  async update(id: string, updateOrderDto: UpdateOrderDto, partenaireId) {
 
     const product = await this.prismaService.product.findUnique({ where: { id, partenaireId } });
 
@@ -172,7 +172,7 @@ export class OrdersService {
 
   }
 
-  async softDeleteOrders(partenaireId, id: number) {
+  async softDeleteOrders(partenaireId, id: string) {
     return this.prismaService.orders.update({
       where: { id },
       data: {

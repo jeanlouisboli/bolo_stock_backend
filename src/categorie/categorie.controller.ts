@@ -1,36 +1,37 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req, Query, ParseIntPipe, UseGuards, Put } from '@nestjs/common';
-
-import { ApiBearerAuth, ApiBody, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { JwtUser } from 'src/auth/interface/jwt-user.interface';
-import { AuthGuard } from '@nestjs/passport';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req } from '@nestjs/common';
+import { CategorieService } from './categorie.service';
+import { CreateCategorieDto } from './dto/create-categorie.dto';
+import { UpdateCategorieDto } from './dto/update-categorie.dto';
+import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
-import { PromotionService } from './promotion.service';
-import { CreatePromotionDto } from './dto/create-promotion.dto';
-import { UpdatePromotionDto } from './dto/update-promotion.dto';
-
-@ApiTags('promotion')
-
-@Controller('promotion')
-export class PromotionController {
-  constructor(private readonly promotionService: PromotionService) {}
+import { JwtUser } from 'src/auth/interface/jwt-user.interface';
 
 
-   @ApiBearerAuth()
+@ApiTags('products')
+@Controller('categorie')
+export class CategorieController {
+  constructor(private readonly categorieService: CategorieService) {}
+
+
+  
+  
+    
+  
+    @ApiBearerAuth()
     @ApiResponse({ status: 201, description: 'The record has been successfully created.'})
     @ApiResponse({ status: 401, description: 'Autorisation requise.'})
     @ApiBody({
-      type: CreatePromotionDto,
-      description: 'Json structure for order object',
+      type: CreateCategorieDto,
+      description: 'Json structure for product object',
    })
-   @UseGuards(AuthGuard('jwt'))
     @Post()
-    create(@Body() createPromotionDto: CreatePromotionDto, @Req() req: Request ) {
+    create(@Body() createProductDto: CreateCategorieDto, @Req() req: Request ) {
       
       const user = req.user as JwtUser; // typage ici
       const partenaireId = user.partenaireId;
   
   
-      return this.promotionService.create(createPromotionDto,partenaireId);
+      return this.productsService.create(createProductDto,partenaireId);
     }
   
   
@@ -39,7 +40,6 @@ export class PromotionController {
     @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Nombre d\'éléments par page (optionnel)' })
     @ApiResponse({ status: 200, description: 'Liste des produits avec partenaire' })
     @ApiResponse({ status: 401, description: 'Autorisation requise.'})
-    @UseGuards()
     @Get()
     findAll(@Req() req: Request,
        @Query('page') page?: number,
@@ -53,7 +53,7 @@ export class PromotionController {
       const partenaireId = user.partenaireId;
   
      // return partenaireId;
-      return this.promotionService.findAll(partenaireId,parsedPage, parsedLimit);
+      return this.productsService.findAll(partenaireId,parsedPage, parsedLimit);
     }
   
   
@@ -68,7 +68,7 @@ export class PromotionController {
       const user = req.user as JwtUser; // typage ici
       const partenaireId = user.partenaireId;
   
-      return this.promotionService.findOne(partenaireId,id);
+      return this.productsService.findOne(partenaireId,id);
     }
   
   
@@ -78,17 +78,16 @@ export class PromotionController {
     @ApiResponse({ status: 401, description: 'Autorisation requise.'})
     @ApiParam({ name: 'id',required: true, type: String, description: 'l\id du produit ' })
     @ApiBody({
-      type: CreatePromotionDto,
-      description: 'Json structure for promotion object',
+      type: CreateProductDto,
+      description: 'Json structure for product object',
    })
-   @UseGuards(AuthGuard('jwt'))
     @Put(':id')
-    update(@Param('id',ParseIntPipe) id: string, @Body() UpdateOrderDto: UpdatePromotionDto, @Req() req: Request) {
+    update(@Param('id',ParseIntPipe) id: string, @Body() updateProductDto: UpdateProductDto, @Req() req: Request) {
   
       const user = req.user as JwtUser; // typage ici
       const partenaireId = user.partenaireId;
   
-      return this.promotionService.update(id, UpdateOrderDto,partenaireId);
+      return this.productsService.update(id, updateProductDto,partenaireId);
     }
   
   
@@ -96,7 +95,6 @@ export class PromotionController {
     @ApiResponse({ status: 201, description: 'The record has been successfully deleted.'})
     @ApiResponse({ status: 401, description: 'Autorisation requise.'})
     @ApiParam({ name: 'id',required: true, type: String, description: 'l\id du produit ' })
-    @UseGuards(AuthGuard('jwt'))
     @Delete(':id')
     softDeletePartenaire(@Req() req: Request,@Param('id',ParseIntPipe) id: string) {
       
@@ -104,7 +102,8 @@ export class PromotionController {
       const partenaireId = user.partenaireId;
   
   
-      return this.promotionService.softDeletePromotion(partenaireId,id);
+      return this.productsService.softDeletePartenaire(partenaireId,id);
     }
-    
+
+
 }

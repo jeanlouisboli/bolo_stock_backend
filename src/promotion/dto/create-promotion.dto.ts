@@ -13,8 +13,8 @@ export class CreatePromotionDto {
       description:string
 
       @ApiProperty()
-      @IsString()
-      categorie:string
+      @IsNumber()
+      categorieId:string
 
       @ApiProperty()
       @IsNumber()
@@ -23,7 +23,7 @@ export class CreatePromotionDto {
       @ApiProperty()
       @IsOptional()
       @IsNumber()
-      productId?: number
+      productId?: string
 
       @ApiProperty()
       @IsNumber()

@@ -9,7 +9,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
@@ -20,12 +20,24 @@ enum Role {
   ADMIN
 }
 
+model TypePartenaire{
+  id String @id @default(auto())  @map("_id") @db.ObjectId
+  libelle String 
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime? 
+  deletedAt DateTime?
+
+  partenaire Partenaire[]
+  @@map("t_type_partenaire")
+}
 
 
 model Partenaire{
-  id Int @id @default(autoincrement())
+
+    id String @id @default(auto())  @map("_id") @db.ObjectId
   name String
-  type_commerce String
+ 
   adresse String
   pays String
   ville String
@@ -40,7 +52,8 @@ model Partenaire{
   updatedAt  DateTime? 
   deletedAt DateTime?
 
-  
+  typePartenaireId String? @db.ObjectId
+  typePartenaire TypePartenaire? @relation(fields: [typePartenaireId], references: [id])
 
   product Product[]
   Promotion Promotion[]
@@ -48,17 +61,33 @@ model Partenaire{
   @@map("t_partenaire")
 }
 
+
+
+model Categorie{
+  id String @id @default(auto())  @map("_id") @db.ObjectId
+  libelle String 
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime? 
+  deletedAt DateTime?
+
+  product Product[]
+  @@map("t_categorie")
+}
+
+
 model Product{
-  id Int @id @default(autoincrement())
+    id String @id @default(auto())  @map("_id") @db.ObjectId
   libelle String
-  categorie String?
   description String
   prix Int?
   imagePath String? 
   
-  partenaireId Int 
+  partenaireId String @db.ObjectId 
   partenaire Partenaire @relation(fields: [partenaireId], references: [id])
 
+  categorieId String? @db.ObjectId 
+  categorie Categorie? @relation(fields: [categorieId], references: [id])
   
   createdAt DateTime @default(now())
   updatedAt DateTime? 
@@ -71,7 +100,7 @@ model Product{
 
 
 model Promotion{
-  id Int @id @default(autoincrement())
+    id String @id @default(auto())  @map("_id") @db.ObjectId
   
   prixPromo Int
   remise Int
@@ -79,10 +108,10 @@ model Promotion{
   seuil Int
   statut Boolean @default(true)
 
-  partenaireId Int 
+  partenaireId String @db.ObjectId 
   partenaire Partenaire @relation(fields: [partenaireId], references: [id])
 
-  productId Int 
+  productId String @db.ObjectId 
   product Product @relation(fields: [productId], references: [id])
 
 
@@ -101,7 +130,7 @@ model Promotion{
 
 model Client{
 
-  id Int @id @default(autoincrement())
+    id String @id @default(auto())  @map("_id") @db.ObjectId
    nomClient String
   numeroTelephone String
   email String @unique
@@ -118,13 +147,13 @@ model Client{
 }
 
 model Orders{
-  id Int @id @default(autoincrement())
+    id String @id @default(auto())  @map("_id") @db.ObjectId
 
 
-  clientId Int
+  clientId String @db.ObjectId
   client Client @relation(fields: [clientId], references: [id]) 
 
-  promotionId Int
+  promotionId String @db.ObjectId
   promotion Promotion @relation(fields: [promotionId], references: [id])
 
   quantite Int

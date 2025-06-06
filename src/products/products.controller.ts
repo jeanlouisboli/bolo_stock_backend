@@ -62,9 +62,9 @@ export class ProductsController {
   @ApiBearerAuth()
   @ApiResponse({ status: 201, description: 'The record has been successfully created.'})
   @ApiResponse({ status: 401, description: 'Autorisation requise.'})
-  @ApiParam({ name: 'id',required: true, type: Number, description: 'l\id du produit ' })
+  @ApiParam({ name: 'id',required: true, type: String, description: 'l\id du produit ' })
   @Get(':id')
-  findOne(@Req() req: Request,@Param('id',ParseIntPipe) id: number) {
+  findOne(@Req() req: Request,@Param('id',ParseIntPipe) id: string) {
 
     const user = req.user as JwtUser; // typage ici
     const partenaireId = user.partenaireId;
@@ -77,13 +77,13 @@ export class ProductsController {
   @ApiBearerAuth()
   @ApiResponse({ status: 201, description: 'The record has been successfully updated.'})
   @ApiResponse({ status: 401, description: 'Autorisation requise.'})
-  @ApiParam({ name: 'id',required: true, type: Number, description: 'l\id du produit ' })
+  @ApiParam({ name: 'id',required: true, type: String, description: 'l\id du produit ' })
   @ApiBody({
     type: CreateProductDto,
     description: 'Json structure for product object',
  })
   @Put(':id')
-  update(@Param('id',ParseIntPipe) id: number, @Body() updateProductDto: UpdateProductDto, @Req() req: Request) {
+  update(@Param('id',ParseIntPipe) id: string, @Body() updateProductDto: UpdateProductDto, @Req() req: Request) {
 
     const user = req.user as JwtUser; // typage ici
     const partenaireId = user.partenaireId;
@@ -95,9 +95,9 @@ export class ProductsController {
   @ApiBearerAuth()
   @ApiResponse({ status: 201, description: 'The record has been successfully deleted.'})
   @ApiResponse({ status: 401, description: 'Autorisation requise.'})
-  @ApiParam({ name: 'id',required: true, type: Number, description: 'l\id du produit ' })
+  @ApiParam({ name: 'id',required: true, type: String, description: 'l\id du produit ' })
   @Delete(':id')
-  softDeletePartenaire(@Req() req: Request,@Param('id',ParseIntPipe) id: number) {
+  softDeletePartenaire(@Req() req: Request,@Param('id',ParseIntPipe) id: string) {
     
     const user = req.user as JwtUser; // typage ici
     const partenaireId = user.partenaireId;

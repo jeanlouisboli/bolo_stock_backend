@@ -55,7 +55,7 @@ export class PartenaireService {
 
       data: {
         name: createPartenaireDto.name,
-        type_commerce: createPartenaireDto.type_commerce,
+        typePartenaireId: createPartenaireDto.typePartenaireId,
         email: createPartenaireDto.email,
         adresse: createPartenaireDto.adresse,
         ville: createPartenaireDto.ville,
@@ -107,7 +107,7 @@ export class PartenaireService {
   }
 
 
-  async findOne(id: number) {
+  async findOne(id: string) {
 
     const partenaire = await this.prismaService.partenaire.findUnique({ where: { id } });
 
@@ -118,7 +118,7 @@ export class PartenaireService {
   }
 
 
-  async addLocationPartenaire(id: number, addLocationPartenaire: AddLocationPartenaireDto) {
+  async addLocationPartenaire(id: string, addLocationPartenaire: AddLocationPartenaireDto) {
 
     const partenaire = await this.prismaService.partenaire.findUnique({ where: { id } });
 
@@ -137,7 +137,7 @@ export class PartenaireService {
 
   }
 
-  async update(id: number, updatePartenaireDto: UpdatePartenaireDto) {
+  async update(id: string, updatePartenaireDto: UpdatePartenaireDto) {
 
     const Partenaire = await this.prismaService.partenaire.findUnique({ where: { id } });
 
@@ -182,7 +182,7 @@ export class PartenaireService {
     return PartenaireUpdate
   }
 
-  async softDeletePartenaire(id: number) {
+  async softDeletePartenaire(id: string) {
     return this.prismaService.partenaire.update({
       where: { id },
       data: {
