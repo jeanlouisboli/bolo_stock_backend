@@ -1,44 +1,40 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req, Query, Put, ParseIntPipe } from '@nestjs/common';
 import { CategorieService } from './categorie.service';
 import { CreateCategorieDto } from './dto/create-categorie.dto';
 import { UpdateCategorieDto } from './dto/update-categorie.dto';
-import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { JwtUser } from 'src/auth/interface/jwt-user.interface';
 
 
-@ApiTags('products')
+@ApiTags('categorie')
 @Controller('categorie')
 export class CategorieController {
+
+
   constructor(private readonly categorieService: CategorieService) {}
 
-
-  
-  
-    
-  
-    @ApiBearerAuth()
+    // @ApiBearerAuth()
     @ApiResponse({ status: 201, description: 'The record has been successfully created.'})
-    @ApiResponse({ status: 401, description: 'Autorisation requise.'})
+    // @ApiResponse({ status: 401, description: 'Autorisation requise.'})
     @ApiBody({
       type: CreateCategorieDto,
-      description: 'Json structure for product object',
+      description: 'Json structure for categorie object',
    })
     @Post()
-    create(@Body() createProductDto: CreateCategorieDto, @Req() req: Request ) {
+    create(@Body() createCategorieDto: CreateCategorieDto, @Req() req: Request ) {
       
-      const user = req.user as JwtUser; // typage ici
-      const partenaireId = user.partenaireId;
-  
-  
-      return this.productsService.create(createProductDto,partenaireId);
+      // const user = req.user as JwtUser; // typage ici
+      // const partenaireId = user.partenaireId;
+      console.log('Requête reçue avec body:', createCategorieDto);
+      return this.categorieService.create(createCategorieDto);
     }
   
   
-    @ApiBearerAuth()
+    // @ApiBearerAuth()
     @ApiQuery({ name: 'page', required: false, type: Number, description: 'Numéro de page (optionnel)' })
     @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Nombre d\'éléments par page (optionnel)' })
-    @ApiResponse({ status: 200, description: 'Liste des produits avec partenaire' })
+    @ApiResponse({ status: 200, description: 'Liste des categories' })
     @ApiResponse({ status: 401, description: 'Autorisation requise.'})
     @Get()
     findAll(@Req() req: Request,
@@ -53,56 +49,54 @@ export class CategorieController {
       const partenaireId = user.partenaireId;
   
      // return partenaireId;
-      return this.productsService.findAll(partenaireId,parsedPage, parsedLimit);
+      return this.categorieService.findAll(parsedPage, parsedLimit);
     }
   
   
   
-    @ApiBearerAuth()
+    // @ApiBearerAuth()
     @ApiResponse({ status: 201, description: 'The record has been successfully created.'})
     @ApiResponse({ status: 401, description: 'Autorisation requise.'})
     @ApiParam({ name: 'id',required: true, type: String, description: 'l\id du produit ' })
     @Get(':id')
-    findOne(@Req() req: Request,@Param('id',ParseIntPipe) id: string) {
+    findOne(@Req() req: Request,@Param('id') id: string) {
   
       const user = req.user as JwtUser; // typage ici
       const partenaireId = user.partenaireId;
   
-      return this.productsService.findOne(partenaireId,id);
+      return this.categorieService.findOne(id);
     }
   
   
   
-    @ApiBearerAuth()
+    // @ApiBearerAuth()
     @ApiResponse({ status: 201, description: 'The record has been successfully updated.'})
     @ApiResponse({ status: 401, description: 'Autorisation requise.'})
     @ApiParam({ name: 'id',required: true, type: String, description: 'l\id du produit ' })
     @ApiBody({
-      type: CreateProductDto,
+      type: CreateCategorieDto,
       description: 'Json structure for product object',
    })
     @Put(':id')
-    update(@Param('id',ParseIntPipe) id: string, @Body() updateProductDto: UpdateProductDto, @Req() req: Request) {
+    update(@Param('id') id: string, @Body() updateProductDto: UpdateCategorieDto, @Req() req: Request) {
   
       const user = req.user as JwtUser; // typage ici
       const partenaireId = user.partenaireId;
   
-      return this.productsService.update(id, updateProductDto,partenaireId);
+      return this.categorieService.update(id, updateProductDto);
     }
   
-  
-    @ApiBearerAuth()
+    // @ApiBearerAuth()
     @ApiResponse({ status: 201, description: 'The record has been successfully deleted.'})
     @ApiResponse({ status: 401, description: 'Autorisation requise.'})
     @ApiParam({ name: 'id',required: true, type: String, description: 'l\id du produit ' })
     @Delete(':id')
-    softDeletePartenaire(@Req() req: Request,@Param('id',ParseIntPipe) id: string) {
+    softDeleteCategorie(@Req() req: Request,@Param('id') id: string) {
       
       const user = req.user as JwtUser; // typage ici
       const partenaireId = user.partenaireId;
   
-  
-      return this.productsService.softDeletePartenaire(partenaireId,id);
+      return this.categorieService.softDeleteCategorie(id);
     }
 
 

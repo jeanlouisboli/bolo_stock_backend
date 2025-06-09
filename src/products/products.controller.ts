@@ -16,8 +16,6 @@ export class ProductsController {
   
   constructor(private readonly productsService: ProductsService) {}
 
-  
-
   @ApiBearerAuth()
   @ApiResponse({ status: 201, description: 'The record has been successfully created.'})
   @ApiResponse({ status: 401, description: 'Autorisation requise.'})
