@@ -145,7 +145,7 @@ export class ProductsService {
 
   }
 
-  async softDeletePartenaire(partenaireId, id: string) {
+  async softDeleteProduct(partenaireId, id: string) {
     return this.prismaService.product.update({
       where: { id, partenaireId },
       data: {

@@ -8,15 +8,16 @@ import { Request } from 'express';
 import { JwtUser } from 'src/auth/interface/jwt-user.interface';
 
 
-@UseGuards(AuthGuard('jwt'))
 @ApiTags('products')
+@ApiBearerAuth()
+@UseGuards(AuthGuard('jwt'))
 @Controller('products')
 export class ProductsController {
 
   
   constructor(private readonly productsService: ProductsService) {}
 
-  @ApiBearerAuth()
+  
   @ApiResponse({ status: 201, description: 'The record has been successfully created.'})
   @ApiResponse({ status: 401, description: 'Autorisation requise.'})
   @ApiBody({
@@ -29,12 +30,10 @@ export class ProductsController {
     const user = req.user as JwtUser; // typage ici
     const partenaireId = user.partenaireId;
 
-
     return this.productsService.create(createProductDto,partenaireId);
   }
 
 
-  @ApiBearerAuth()
   @ApiQuery({ name: 'page', required: false, type: Number, description: 'Numéro de page (optionnel)' })
   @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Nombre d\'éléments par page (optionnel)' })
   @ApiResponse({ status: 200, description: 'Liste des produits avec partenaire' })
@@ -57,7 +56,7 @@ export class ProductsController {
 
 
 
-  @ApiBearerAuth()
+  
   @ApiResponse({ status: 201, description: 'The record has been successfully created.'})
   @ApiResponse({ status: 401, description: 'Autorisation requise.'})
   @ApiParam({ name: 'id',required: true, type: String, description: 'l\id du produit ' })
@@ -72,7 +71,7 @@ export class ProductsController {
 
 
 
-  @ApiBearerAuth()
+ 
   @ApiResponse({ status: 201, description: 'The record has been successfully updated.'})
   @ApiResponse({ status: 401, description: 'Autorisation requise.'})
   @ApiParam({ name: 'id',required: true, type: String, description: 'l\id du produit ' })
@@ -90,17 +89,17 @@ export class ProductsController {
   }
 
 
-  @ApiBearerAuth()
+ 
   @ApiResponse({ status: 201, description: 'The record has been successfully deleted.'})
   @ApiResponse({ status: 401, description: 'Autorisation requise.'})
   @ApiParam({ name: 'id',required: true, type: String, description: 'l\id du produit ' })
   @Delete(':id')
-  softDeletePartenaire(@Req() req: Request,@Param('id',ParseIntPipe) id: string) {
+  softDeleteProduct(@Req() req: Request,@Param('id',ParseIntPipe) id: string) {
     
     const user = req.user as JwtUser; // typage ici
     const partenaireId = user.partenaireId;
 
 
-    return this.productsService.softDeletePartenaire(partenaireId,id);
+    return this.productsService.softDeleteProduct(partenaireId,id);
   }
 }

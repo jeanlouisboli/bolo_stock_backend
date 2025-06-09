@@ -13,163 +13,144 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 enum Role {
   CLIENT
   ENTREPRISE
   ADMIN
 }
 
-model TypePartenaire{
-  id String @id @default(auto())  @map("_id") @db.ObjectId
-  libelle String 
+model TypePartenaire {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  libelle String
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime? 
+  createdAt DateTime  @default(now())
+  updatedAt DateTime?
   deletedAt DateTime?
 
   partenaire Partenaire[]
+
   @@map("t_type_partenaire")
 }
 
-
-model Partenaire{
-
-    id String @id @default(auto())  @map("_id") @db.ObjectId
+model Partenaire {
+  id   String @id @default(auto()) @map("_id") @db.ObjectId
   name String
- 
-  adresse String
-  pays String
-  ville String
-  email String 
+
+  adresse    String
+  pays       String
+  ville      String
+  email      String
   latitude   Float?
   longitude  Float?
-  username   String? @unique
-  password String?
-  approved Boolean?
+  username   String?   @unique
+  password   String?
+  approved   Boolean?
   venteTotal Float?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime? 
-  deletedAt DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime?
+  deletedAt  DateTime?
 
-  typePartenaireId String? @db.ObjectId
-  typePartenaire TypePartenaire? @relation(fields: [typePartenaireId], references: [id])
+  typePartenaireId String?         @db.ObjectId
+  typePartenaire   TypePartenaire? @relation(fields: [typePartenaireId], references: [id])
 
-  product Product[]
+  product   Product[]
   Promotion Promotion[]
 
   @@map("t_partenaire")
 }
 
+model Categorie {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  libelle String
 
-
-model Categorie{
-  id String @id @default(auto())  @map("_id") @db.ObjectId
-  libelle String 
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime? 
+  createdAt DateTime  @default(now())
+  updatedAt DateTime?
   deletedAt DateTime?
 
   product Product[]
+
   @@map("t_categorie")
 }
 
-
-model Product{
-    id String @id @default(auto())  @map("_id") @db.ObjectId
-  libelle String
+model Product {
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  libelle     String
   description String
-  prix Int?
-  imagePath String? 
-  
-  partenaireId String @db.ObjectId 
-  partenaire Partenaire @relation(fields: [partenaireId], references: [id])
+  prix        Int?
+  imagePath   String?
 
-  categorieId String? @db.ObjectId 
-  categorie Categorie? @relation(fields: [categorieId], references: [id])
-  
-  createdAt DateTime @default(now())
-  updatedAt DateTime? 
+  partenaireId String     @db.ObjectId
+  partenaire   Partenaire @relation(fields: [partenaireId], references: [id])
+
+  categorieId String?    @db.ObjectId
+  categorie   Categorie? @relation(fields: [categorieId], references: [id])
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime?
   deletedAt DateTime?
- 
+
   Promotion Promotion[]
 
   @@map("t_product")
 }
 
+model Promotion {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
 
-model Promotion{
-    id String @id @default(auto())  @map("_id") @db.ObjectId
-  
   prixPromo Int
-  remise Int
-  stock Int
-  seuil Int
-  statut Boolean @default(true)
+  remise    Int
+  stock     Int
+  seuil     Int
+  statut    Boolean @default(true)
 
-  partenaireId String @db.ObjectId 
-  partenaire Partenaire @relation(fields: [partenaireId], references: [id])
+  partenaireId String     @db.ObjectId
+  partenaire   Partenaire @relation(fields: [partenaireId], references: [id])
 
-  productId String @db.ObjectId 
-  product Product @relation(fields: [productId], references: [id])
+  productId String  @db.ObjectId
+  product   Product @relation(fields: [productId], references: [id])
 
+  dateDebut  DateTime?
+  dateExpire DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime?
+  deletedAt  DateTime?
 
-  dateDebut DateTime?
-  dateExpire DateTime? 
-  createdAt DateTime @default(now())
-  updatedAt DateTime? 
-  deletedAt DateTime?
- 
   Orders Orders[]
-  
 
   @@map("t_promotion")
 }
 
-
-model Client{
-
-    id String @id @default(auto())  @map("_id") @db.ObjectId
-   nomClient String
+model Client {
+  id              String @id @default(auto()) @map("_id") @db.ObjectId
+  nomClient       String
   numeroTelephone String
-  email String @unique
+  email           String @unique
 
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime? 
+  createdAt DateTime  @default(now())
+  updatedAt DateTime?
   deletedAt DateTime?
-
 
   Orders Orders[]
-  @@map("t_client")
 
+  @@map("t_client")
 }
 
-model Orders{
-    id String @id @default(auto())  @map("_id") @db.ObjectId
-
+model Orders {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
 
   clientId String @db.ObjectId
-  client Client @relation(fields: [clientId], references: [id]) 
+  client   Client @relation(fields: [clientId], references: [id])
 
-  promotionId String @db.ObjectId
-  promotion Promotion @relation(fields: [promotionId], references: [id])
+  promotionId String    @db.ObjectId
+  promotion   Promotion @relation(fields: [promotionId], references: [id])
 
   quantite Int
-  prix Int 
-  montant Float?
+  prix     Int
+  montant  Float?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime? 
+  createdAt DateTime  @default(now())
+  updatedAt DateTime?
   deletedAt DateTime?
 
- 
-
-  @@map("t_orders") 
+  @@map("t_orders")
 }
-
-
-
-
-

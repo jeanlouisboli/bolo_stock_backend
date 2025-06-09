@@ -1,13 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req, Query, Put, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req, Query, Put, ParseIntPipe, UseGuards } from '@nestjs/common';
 import { CategorieService } from './categorie.service';
 import { CreateCategorieDto } from './dto/create-categorie.dto';
 import { UpdateCategorieDto } from './dto/update-categorie.dto';
 import { ApiBearerAuth, ApiBody, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { JwtUser } from 'src/auth/interface/jwt-user.interface';
+import { AuthGuard } from '@nestjs/passport';
 
 
+@ApiBearerAuth()
 @ApiTags('categorie')
+@UseGuards(AuthGuard('jwt'))
 @Controller('categorie')
 export class CategorieController {
 
