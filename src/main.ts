@@ -5,6 +5,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.enableCors();
   app.setGlobalPrefix('api/v1');
   const config = new DocumentBuilder()
     .setTitle('Bôlô API')
@@ -17,7 +18,8 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document);
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
-  console.log('🚀 App démarre... ', process.env.PORT);
+
   await app.listen(process.env.PORT ?? 3000);
+  console.log('🚀 App démarre... ', process.env.PORT);
 }
 bootstrap();

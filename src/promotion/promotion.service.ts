@@ -45,10 +45,13 @@ export class PromotionService {
                     data: {
                         libelle: createPromotionDto.libelle,
                         description: createPromotionDto.description,
-                        categorie: createPromotionDto.categorie,
                         prix: createPromotionDto.prix,
                         partenaire: {
                             connect: { id: partenaireId },
+                        },
+
+                        categorie: {
+                            connect: { id: createPromotionDto.categorieId },
                         },
                     },
                 });
@@ -112,7 +115,7 @@ export class PromotionService {
         };
     }
 
-    async findOne(partenaireId, id: number) {
+    async findOne(partenaireId, id: string) {
 
         const promotion = await this.prismaService.promotion.findUnique({ where: { id, partenaireId },include: {
             partenaire: true,
@@ -129,8 +132,7 @@ export class PromotionService {
 
     }
 
-
-    async update(id: number, updatePromotionDto: UpdatePromotionDto, partenaireId) {
+    async update(id: string, updatePromotionDto: UpdatePromotionDto, partenaireId) {
 
         let promotion = null;
          promotion = await this.prismaService.promotion.findUnique({ where: { id, partenaireId } });
@@ -158,10 +160,13 @@ export class PromotionService {
                 data: {
                     libelle: updatePromotionDto.libelle,
                     description: updatePromotionDto.description,
-                    categorie: updatePromotionDto.categorie,
+                    
                     prix: updatePromotionDto.prix,
                     partenaire: {
                         connect: { id: partenaireId },
+                    },
+                    categorie: {
+                        connect: { id: updatePromotionDto.categorieId },
                     },
                     
                 },
@@ -222,7 +227,7 @@ export class PromotionService {
 
     }
 
-    async softDeletePromotion(partenaireId, id: number) {
+    async softDeletePromotion(partenaireId, id: string) {
         return this.prismaService.promotion.update({
             where: { id, partenaireId },
             data: {

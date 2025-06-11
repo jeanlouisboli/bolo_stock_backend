@@ -6,7 +6,7 @@ export class CreateOrderDto {
 
       @ApiProperty()
       @IsNumber()
-      promotionId: number;
+      promotionId: string;
     
       @ApiProperty()
       @IsNumber()

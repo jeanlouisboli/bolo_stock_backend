@@ -11,11 +11,15 @@ import { PartenaireModule } from './partenaire/partenaire.module';
 import { ConfigModule } from '@nestjs/config';
 import { PromotionController } from './promotion/promotion.controller';
 import { PromotionService } from './promotion/promotion.service';
+import { TypePartenaireModule } from './type-partenaire/type-partenaire.module';
+import { CategorieModule } from './categorie/categorie.module';
 
 @Module({
   imports: [
     PrismaModule,  ProductsModule, OrdersModule, CartModule, AuthModule, PartenaireModule,
-    ConfigModule.forRoot({ isGlobal: true })
+    ConfigModule.forRoot({ isGlobal: true }),
+    TypePartenaireModule,
+    CategorieModule
   ],
   controllers: [AppController, PromotionController],
   providers: [AppService, PromotionService],

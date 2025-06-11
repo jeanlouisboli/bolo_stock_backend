@@ -38,14 +38,15 @@ export class PartenaireController {
     description: 'Json structure for Partenaire object',
   })
   create(@Body() createPartenaireDto: CreatePartenaireDto) {
-    return this.PartenaireService.create(createPartenaireDto);
+    return createPartenaireDto;
+    // return this.PartenaireService.create(createPartenaireDto);
   }
 
 
 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @Post(':id/add-location')
+  @Put(':id/add-location')
   @ApiOperation({ summary: 'Ajouter une localisation à un magasin' })
   @ApiParam({ name: 'id', type: Number, description: 'ID du magasin' })
   @ApiBody({
@@ -53,7 +54,7 @@ export class PartenaireController {
     description: 'Json structure for user object',
   })
   addLocationPartenaire(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseIntPipe) id: string,
     @Body() addLocationPartenaireDto: AddLocationPartenaireDto,
   ) {
     return this.PartenaireService.addLocationPartenaire(id, addLocationPartenaireDto);
@@ -82,7 +83,7 @@ export class PartenaireController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Récupérer un magasin par son ID' })
   @ApiParam({ name: 'id', type: Number, description: 'ID du magasin' })
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  findOne(@Param('id', ParseIntPipe) id: string) {
     return this.PartenaireService.findOne(id);
   }
 
@@ -91,13 +92,13 @@ export class PartenaireController {
   @Put(':id')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Mettre à jour un magasin' })
-  @ApiParam({ name: 'id', type: Number, description: 'ID du magasin' })
+  @ApiParam({ name: 'id', type: String, description: 'ID du magasin' })
   @ApiBody({
     type: CreatePartenaireDto,
     description : 'Json structure for Partenaire object'
   })
   update(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseIntPipe) id: string,
     @Body() updatePartenaireDto: UpdatePartenaireDto,
   ) {
     return this.PartenaireService.update(id, updatePartenaireDto);
@@ -112,7 +113,7 @@ export class PartenaireController {
   @ApiOperation({ summary: 'Supprimer (soft delete) un magasin' })
   @ApiParam({ name: 'id', type: Number, description: 'ID du magasin' })
   @ApiResponse({status:201, description:"Parteniare supprimé"})
-  remove(@Param('id', ParseIntPipe) id: number) {
+  remove(@Param('id', ParseIntPipe) id: string) {
     return this.PartenaireService.softDeletePartenaire(id);
   }
 

@@ -25,8 +25,8 @@ import {
      * Type de commerce (ex: supermarché, boutique, etc.) (obligatoire)
      */
     @ApiProperty()
-    @IsString({ message: 'Le type de commerce est requis.' })
-    type_commerce: string;
+    @IsString()
+    typePartenaireId: string;
   
     /**
      * Adresse physique du commerce (obligatoire)
