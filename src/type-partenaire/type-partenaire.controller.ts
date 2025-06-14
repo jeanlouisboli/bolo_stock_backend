@@ -7,14 +7,14 @@ import { Request } from 'express';
 import { JwtUser } from 'src/auth/interface/jwt-user.interface';
 import { AuthGuard } from '@nestjs/passport';
 
-@ApiBearerAuth()
+// @ApiBearerAuth()
 @ApiTags('type-partenaire')
-@UseGuards(AuthGuard('jwt'))
+// @UseGuards(AuthGuard('jwt'))
 @Controller('type-partenaire')
 export class TypePartenaireController {
   constructor(private readonly typePartenaireService: TypePartenaireService) {}
 
-  // @ApiBearerAuth()
+   @ApiBearerAuth()
       @ApiResponse({ status: 201, description: 'The record has been successfully created.'})
       // @ApiResponse({ status: 401, description: 'Autorisation requise.'})
       @ApiBody({
@@ -69,7 +69,7 @@ export class TypePartenaireController {
     
     
     
-      // @ApiBearerAuth()
+      @ApiBearerAuth()
       @ApiResponse({ status: 201, description: 'The record has been successfully updated.'})
       @ApiResponse({ status: 401, description: 'Autorisation requise.'})
       @ApiParam({ name: 'id',required: true, type: String, description: 'l\id du produit ' })
@@ -86,7 +86,7 @@ export class TypePartenaireController {
         return this.typePartenaireService.update(id, updateTypePartenaireDto);
       }
     
-      // @ApiBearerAuth()
+      @ApiBearerAuth()
       @ApiResponse({ status: 201, description: 'The record has been successfully deleted.'})
       @ApiResponse({ status: 401, description: 'Autorisation requise.'})
       @ApiParam({ name: 'id',required: true, type: String, description: 'l\id du produit ' })

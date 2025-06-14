@@ -80,7 +80,7 @@ export class ProductsController {
     description: 'Json structure for product object',
  })
   @Put(':id')
-  update(@Param('id',ParseIntPipe) id: string, @Body() updateProductDto: UpdateProductDto, @Req() req: Request) {
+  update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto, @Req() req: Request) {
 
     const user = req.user as JwtUser; // typage ici
     const partenaireId = user.partenaireId;

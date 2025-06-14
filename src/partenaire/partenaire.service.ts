@@ -1,78 +1,83 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
-import { CreatePartenaireDto } from './dto/create-partenaire.dto';
-import { UpdatePartenaireDto } from './dto/update-partenaire.dto';
+import { CreatePartnerDto } from './dto/create-partner.dto';
+import { UpdatePartnerDto } from './dto/update-partner.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { take } from 'rxjs';
 import { AuthService } from 'src/auth/auth.service';
 import * as bcrypt from 'bcrypt';
-import { AddLocationPartenaireDto } from './dto/add-location-partenaire.dto';
+import { AddLocationPartnerDto } from './dto/add-location-partner.dto';
 
 @Injectable()
 export class PartenaireService {
 
   constructor(private prismaService: PrismaService, private authService: AuthService) { }
 
-  async create(createPartenaireDto: CreatePartenaireDto) {
+  async create(createPartnerDto: CreatePartnerDto) {
 
     // Vérifie si un utilisateur avec cet email ou username existe déjà
-    const existingPartenaire = await this.prismaService.partenaire.findFirst({
+    const existingPartenaire = await this.prismaService.partner.findFirst({
       where: {
         deletedAt: null,
         OR: [
-          { email: createPartenaireDto.email },
-          { name: createPartenaireDto.name },
-          { username: createPartenaireDto.username },
+          { email: createPartnerDto.email },
+          { name: createPartnerDto.namePartner },
+        
         ],
       },
     });
 
+    
     if (existingPartenaire) {
-      if (existingPartenaire.email === createPartenaireDto.email && existingPartenaire.name === createPartenaireDto.name) {
+      if (existingPartenaire.email === createPartnerDto.email && existingPartenaire.name === createPartnerDto.namePartner) {
         throw new ConflictException("Cet email et ce nom d'entreprise sont déjà utilisés.");
-      } else if (existingPartenaire.name === createPartenaireDto.name) {
+      } else if (existingPartenaire.name === createPartnerDto.namePartner) {
         throw new ConflictException('Ce nom d’entreprise est déjà utilisé.');
-      } else if (existingPartenaire.email === createPartenaireDto.email) {
+      } else if (existingPartenaire.email === createPartnerDto.email) {
         throw new ConflictException('Cet email est déjà utilisé.');
       }
-      else if (existingPartenaire.username === createPartenaireDto.username) {
-        throw new ConflictException('Ce username  est déjà utilisé.');
-      }
+    
 
     }
 
 
-    const hashedPassword = await bcrypt.hash(createPartenaireDto.password, 10);
+    const hashedPassword = await bcrypt.hash(createPartnerDto.password, 10);
 
-    // const user = await this.prismaService.user.create({
-    //   data: {
-    //     username: createPartenaireDto.email,
-    //     email: createPartenaireDto.email,
-    //     role: "ENTREPRISE"
-    //   }
-    // })
+    
 
-    const partenaire = await this.prismaService.partenaire.create({
+    const partenaire = await this.prismaService.partner.create({
 
       data: {
-        name: createPartenaireDto.name,
-        typePartenaireId: createPartenaireDto.typePartenaireId,
-        email: createPartenaireDto.email,
-        adresse: createPartenaireDto.adresse,
-        ville: createPartenaireDto.ville,
-        pays: createPartenaireDto.pays,
-        username : createPartenaireDto.email,
-        password: hashedPassword,
-        latitude: createPartenaireDto.latitude,
-        longitude: createPartenaireDto.longitude,
+        name: createPartnerDto.namePartner,
+        typePartnerId: createPartnerDto.typePartenaireId,
+        email: createPartnerDto.email,
+        adress: createPartnerDto.adress,
+        city: createPartnerDto.city,
+        country: createPartnerDto.country,
+        // username : createPartnerDto.username??createPartnerDto.email,
+        // password: hashedPassword,
+        deletedAt: null
 
       }
     })
 
-    const token = await this.authService.generateTempToken(partenaire.id, partenaire.email, "5m"); // expire dans 5 min
+
+    const user = await this.prismaService.user.create({
+      data: {
+        name: createPartnerDto.nameUser,
+        phone: createPartnerDto.phone,
+        email: createPartnerDto.email,
+        password: hashedPassword,
+        type_user:  createPartnerDto.typeUser
+      }
+    })
+
+
+    const token = await this.authService.generateTempToken(user.id, user.email, "5m"); // expire dans 5 min
 
     return {
       message: 'Entreprise créé',
       partenaire,
+      user,
       token // envoyer ce token au frontend
     };
 
@@ -84,17 +89,17 @@ export class PartenaireService {
 
     // Si pas de pagination → renvoyer tous les Partenaires
     if (!page || !limit) {
-      const data = await this.prismaService.partenaire.findMany({ where });
+      const data = await this.prismaService.partner.findMany({ where });
       return { data, total: data.length, page: 1, limit: data.length, lastPage: 1 };
     }
 
     const [data, total] = await Promise.all([
-      this.prismaService.partenaire.findMany({
+      this.prismaService.partner.findMany({
         where,
         skip: (page - 1) * limit,
         take: limit,
       }),
-      this.prismaService.partenaire.count({ where }),
+      this.prismaService.partner.count({ where }),
     ]);
 
     return {
@@ -109,72 +114,72 @@ export class PartenaireService {
 
   async findOne(id: string) {
 
-    const partenaire = await this.prismaService.partenaire.findUnique({ where: { id } });
+    const partner = await this.prismaService.partner.findUnique({ where: { id } });
 
-    if (!partenaire) throw new NotFoundException();
+    if (!partner) throw new NotFoundException();
 
-    return partenaire;
+    return partner;
 
   }
 
 
-  async addLocationPartenaire(id: string, addLocationPartenaire: AddLocationPartenaireDto) {
+  async addLocationPartner(id: string, addLocationPartner: AddLocationPartnerDto) {
 
-    const partenaire = await this.prismaService.partenaire.findUnique({ where: { id } });
+    const partner = await this.prismaService.partner.findUnique({ where: { id } });
 
-    if (!partenaire) throw new NotFoundException("Le super marché n'existe pas");
+    if (!partner) throw new NotFoundException("Le super marché n'existe pas");
 
 
-    const updadePartenaire = this.prismaService.partenaire.update({
+    const updadePartner = this.prismaService.partner.update({
       where: { id },
       data: {
-        longitude: addLocationPartenaire.longitude,
-        latitude: addLocationPartenaire.latitude,
+        longitude: addLocationPartner.longitude,
+        latitude: addLocationPartner.latitude,
       },
     });
 
-   return updadePartenaire
+   return updadePartner
 
   }
 
-  async update(id: string, updatePartenaireDto: UpdatePartenaireDto) {
+  async update(id: string, updatePartnerDto: UpdatePartnerDto) {
 
-    const Partenaire = await this.prismaService.partenaire.findUnique({ where: { id } });
+    const Partenaire = await this.prismaService.partner.findUnique({ where: { id } });
 
     if (!Partenaire) throw new NotFoundException();
 
 
-    const existingPartenaire = await this.prismaService.partenaire.findFirst({
+    const existingPartenaire = await this.prismaService.partner.findFirst({
       where: {
         deletedAt: null,
         id: {
           not: id, // exclure l'élément en cours d'édition
         },
         OR: [
-          { email: updatePartenaireDto.email },
-          { name: updatePartenaireDto.name },
+          { email: updatePartnerDto.email },
+          { name: updatePartnerDto.namePartner },
         ],
       },
     });
 
     if (existingPartenaire) {
-      if (existingPartenaire.email === updatePartenaireDto.email && existingPartenaire.name === updatePartenaireDto.name) {
+      if (existingPartenaire.email === updatePartnerDto.email && existingPartenaire.name === updatePartnerDto.namePartner) {
         throw new ConflictException("Cet email et ce nom d'entreprise sont déjà utilisés.");
-      } else if (existingPartenaire.email === updatePartenaireDto.email) {
+      } else if (existingPartenaire.email === updatePartnerDto.email) {
         throw new ConflictException('Cet email est déjà utilisé.');
-      } else if (existingPartenaire.name === updatePartenaireDto.name) {
+      } else if (existingPartenaire.name === updatePartnerDto.namePartner) {
         throw new ConflictException('Ce nom d’entreprise est déjà utilisé.');
       }
     }
 
 
 
-    const PartenaireUpdate = await this.prismaService.partenaire.update({
+    const PartenaireUpdate = await this.prismaService.partner.update({
       where: {
         id: id
       },
       data: {
-        ...updatePartenaireDto,
+        ...updatePartnerDto,
         updatedAt : new Date()
       }
     });
@@ -183,7 +188,7 @@ export class PartenaireService {
   }
 
   async softDeletePartenaire(id: string) {
-    return this.prismaService.partenaire.update({
+    return this.prismaService.partner.update({
       where: { id },
       data: {
         deletedAt: new Date(), // Marque comme supprimé

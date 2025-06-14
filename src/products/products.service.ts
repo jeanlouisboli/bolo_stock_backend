@@ -97,6 +97,18 @@ export class ProductsService {
     if (!product) throw new NotFoundException();
 
 
+   let existingCategorie = await this.prismaService.categorie.findFirst({
+      where: {
+        deletedAt: null,
+        OR: [
+          { id: updateProductDto.categorieId },
+        ],
+      },
+    });
+
+    if (!existingCategorie) throw new NotFoundException();
+
+
     const existingProduct = await this.prismaService.product.findFirst({
       where: {
         deletedAt: null,

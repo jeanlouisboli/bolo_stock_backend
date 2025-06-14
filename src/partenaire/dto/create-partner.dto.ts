@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { TypeUser } from '@prisma/client';
 import {
     IsString,
     IsOptional,
@@ -7,76 +8,61 @@ import {
     IsLatitude,
     IsLongitude,
     MinLength,
+    Matches,
   } from 'class-validator';
   
   /**
    * DTO pour la création d'un commerce.
    * Tous les champs sauf latitude et longitude sont obligatoires.
    */
-  export class CreatePartenaireDto {
+  export class CreatePartnerDto {
     /**
      * Nom du commerce (obligatoire)
      */
     @ApiProperty()
     @IsString({ message: 'Le nom du commerce est requis.' })
-    name: string;
+    namePartner: string;
   
-    /**
-     * Type de commerce (ex: supermarché, boutique, etc.) (obligatoire)
-     */
-    @ApiProperty()
-    @IsString()
-    typePartenaireId: string;
-  
-    /**
+
+      /**
      * Adresse physique du commerce (obligatoire)
      */
     @ApiProperty()
     @IsString({ message: "L'adresse est requise." })
-    adresse: string;
-  
-    /**
+    adress: string;
+
+        /**
+     * Ville du commerce (obligatoire)
+     */
+    @ApiProperty()
+    @IsString({ message: 'La ville est requise.' })
+    city: string;
+
+
+       /**
      * Adresse email valide du commerce (obligatoire)
      */
     @ApiProperty()
     @IsEmail({}, { message: "Une adresse email valide est requise." })
     email: string;
-  
-    /**
-     * Ville du commerce (obligatoire)
-     */
-    @ApiProperty()
-    @IsString({ message: 'La ville est requise.' })
-    ville: string;
-  
+ 
     /**
      * Pays du commerce (obligatoire)
      */
     @ApiProperty()
     @IsString({ message: 'Le pays est requis.' })
-    pays: string;
-  
+    country: string;
+
+
     /**
-     * Latitude GPS du commerce (optionnelle)
+     * Type de commerce (ex: supermarché, boutique, etc.) (obligatoire)
      */
-    @ApiProperty({
-      required:false
-    })
-    @IsOptional()
-    @IsNumber({}, { message: 'La latitude doit être un nombre.' })
-    @IsLatitude({ message: 'La latitude doit être valide.' })
-    latitude?: number;
-  
-    /**
-     * Longitude GPS du commerce (optionnelle)
-     */
-    @ApiProperty({
-      required:false
-    })
-    @IsOptional()
-    @IsNumber({}, { message: 'La longitude doit être un nombre.' })
-    @IsLongitude({ message: 'La longitude doit être valide.' })
-    longitude?: number;
+    @ApiProperty()
+    @IsString()
+    @Matches(/^[a-fA-F0-9]{24}$/, {
+        message: 'typePartenaireId doit être un ObjectId MongoDB valide (24 caractères hexadécimaux)',
+      })
+    typePartenaireId: string;
   
     /**
      * Nom d'utilisateur unique pour se connecter (obligatoire)
@@ -84,8 +70,20 @@ import {
     @ApiProperty()
     @IsOptional()
     @IsString({ message: "Le nom d'utilisateur est requis." })
-    username: string;
+    nameUser: string;
   
+
+     /**
+     * numero de telephone
+     */
+    @ApiProperty()
+    @IsString()
+    @Matches(/^[a-fA-F0-9]{10}$/, {
+        message: 'phone doit être de 10 caractères)',
+      })
+    phone: string;
+
+
     /**
      * Mot de passe (obligatoire, minimum 6 caractères recommandé)
      */
@@ -94,5 +92,19 @@ import {
     @IsString({ message: 'Le mot de passe est requis.' })
     @MinLength(6, { message: 'Le mot de passe doit contenir au moins 6 caractères.' })
     password: string;
+
+
+
+    /**
+     * Type de commerce (ex: supermarché, boutique, etc.) (obligatoire)
+     */
+    @ApiProperty()
+    @IsString()
+    @Matches(/^[a-fA-F0-9]{24}$/, {
+        message: 'typeUser doit parmi la liste',
+      })
+    typeUser: TypeUser;
+
+    
   }
   

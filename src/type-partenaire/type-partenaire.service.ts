@@ -11,7 +11,7 @@ export class TypePartenaireService {
   async create(createTypePartenaireDto: CreateTypePartenaireDto) {
   
    
-      const existingCategorie = await this.prismaService.categorie.findFirst({
+      const existingTypePartenaire = await this.prismaService.typePartenaire.findFirst({
         where: {
           deletedAt: null,
           OR: [
@@ -22,9 +22,9 @@ export class TypePartenaireService {
   
   
     
-      if (existingCategorie) {
+      if (existingTypePartenaire) {
   
-        throw new ConflictException('Ce type de partenaire  est déjà utilisé.');
+        throw new ConflictException('Ce type de partenaire est déjà utilisé.');
   
   
       }
@@ -42,7 +42,7 @@ export class TypePartenaireService {
   
   
       return {
-        message: 'Categorie créé',
+        message: 'Type de partenaire créé',
         typePartenaire,
   
       };

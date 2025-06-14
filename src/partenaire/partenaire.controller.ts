@@ -11,9 +11,9 @@ import {
   Put,
 } from '@nestjs/common';
 import { PartenaireService } from './partenaire.service';
-import { CreatePartenaireDto } from './dto/create-partenaire.dto';
-import { UpdatePartenaireDto } from './dto/update-partenaire.dto';
-import { AddLocationPartenaireDto } from './dto/add-location-partenaire.dto';
+import { CreatePartenaireDto } from './dto/create-partner.dto';
+import { UpdatePartenaireDto } from './dto/update-partner.dto';
+import { AddLocationPartenaireDto } from './dto/add-location-partner.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import {
   ApiTags,
@@ -38,8 +38,8 @@ export class PartenaireController {
     description: 'Json structure for Partenaire object',
   })
   create(@Body() createPartenaireDto: CreatePartenaireDto) {
-    return createPartenaireDto;
-    // return this.PartenaireService.create(createPartenaireDto);
+    //return createPartenaireDto;
+    return this.PartenaireService.create(createPartenaireDto);
   }
 
 

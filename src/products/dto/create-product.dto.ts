@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsInt, IsOptional, IsDate, IsDateString, IsNumber } from 'class-validator';
+import { IsString, IsInt, IsOptional, IsDate, IsDateString, IsNumber, Matches } from 'class-validator';
 
 export class CreateProductDto {
 
@@ -13,6 +13,9 @@ export class CreateProductDto {
 
   @ApiProperty()
   @IsString()
+  @Matches(/^[a-fA-F0-9]{24}$/, {
+    message: 'categorieId doit être un ObjectId MongoDB valide (24 caractères hexadécimaux)',
+  })
   categorieId: string;
 
   @ApiProperty()
