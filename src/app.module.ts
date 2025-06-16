@@ -12,7 +12,7 @@ import { ConfigModule } from '@nestjs/config';
 import { PromotionController } from './promotion/promotion.controller';
 import { PromotionService } from './promotion/promotion.service';
 import { TypePartenaireModule } from './type-partenaire/type-partenaire.module';
-import { CategorieModule } from './categorie/categorie.module';
+import { CategorieModule } from './categorie/category.module';
 
 @Module({
   imports: [

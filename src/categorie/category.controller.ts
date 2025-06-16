@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Req, Query, Put, ParseIntPipe, UseGuards } from '@nestjs/common';
-import { CategorieService } from './categorie.service';
-import { CreateCategorieDto } from './dto/create-categorie.dto';
-import { UpdateCategorieDto } from './dto/update-categorie.dto';
+import { CategorieService } from './category.service';
+import { CreateCategorieDto } from './dto/create-category.dto';
+import { UpdateCategorieDto } from './dto/update-category.dto';
 import { ApiBearerAuth, ApiBody, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { JwtUser } from 'src/auth/interface/jwt-user.interface';

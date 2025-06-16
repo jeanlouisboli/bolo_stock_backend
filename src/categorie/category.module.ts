@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { CategorieService } from './categorie.service';
-import { CategorieController } from './categorie.controller';
+import { CategorieService } from './category.service';
+import { CategorieController } from './category.controller';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Module({
