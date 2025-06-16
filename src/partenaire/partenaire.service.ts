@@ -6,6 +6,7 @@ import { take } from 'rxjs';
 import { AuthService } from 'src/auth/auth.service';
 import * as bcrypt from 'bcrypt';
 import { AddLocationPartnerDto } from './dto/add-location-partner.dto';
+import { TypeUser } from '@prisma/client';
 
 @Injectable()
 export class PartenaireService {
@@ -13,6 +14,21 @@ export class PartenaireService {
   constructor(private prismaService: PrismaService, private authService: AuthService) { }
 
   async create(createPartnerDto: CreatePartnerDto) {
+
+     // Vérifie si un utilisateur avec cet email ou username existe déjà
+    const existingTypePartner = await this.prismaService.typePartner.findFirst({
+      where: {
+        deletedAt: null,
+        OR: [
+          { id: createPartnerDto.typePartnerId },
+        ],
+      },
+    });
+    if(existingTypePartner){
+      throw new NotFoundException("Ce type de partenaire est inexistant !")
+    }
+
+
 
     // Vérifie si un utilisateur avec cet email ou username existe déjà
     const existingPartenaire = await this.prismaService.partner.findFirst({
@@ -44,11 +60,11 @@ export class PartenaireService {
 
     
 
-    const partenaire = await this.prismaService.partner.create({
+    const partner = await this.prismaService.partner.create({
 
       data: {
         name: createPartnerDto.namePartner,
-        typePartnerId: createPartnerDto.typePartenaireId,
+        typePartnerId: createPartnerDto.typePartnerId,
         email: createPartnerDto.email,
         adress: createPartnerDto.adress,
         city: createPartnerDto.city,
@@ -67,7 +83,8 @@ export class PartenaireService {
         phone: createPartnerDto.phone,
         email: createPartnerDto.email,
         password: hashedPassword,
-        type_user:  createPartnerDto.typeUser
+        type_user:  TypeUser.PARTENAIRE,
+        partnerId: partner.id
       }
     })
 
@@ -76,7 +93,7 @@ export class PartenaireService {
 
     return {
       message: 'Entreprise créé',
-      partenaire,
+      partner,
       user,
       token // envoyer ce token au frontend
     };
@@ -87,7 +104,7 @@ export class PartenaireService {
     
     const where = { deletedAt: null };
 
-    // Si pas de pagination → renvoyer tous les Partenaires
+    // Si pas de pagination → renvoyer tous les partner
     if (!page || !limit) {
       const data = await this.prismaService.partner.findMany({ where });
       return { data, total: data.length, page: 1, limit: data.length, lastPage: 1 };
@@ -144,12 +161,12 @@ export class PartenaireService {
 
   async update(id: string, updatePartnerDto: UpdatePartnerDto) {
 
-    const Partenaire = await this.prismaService.partner.findUnique({ where: { id } });
+    const partner = await this.prismaService.partner.findUnique({ where: { id } });
 
-    if (!Partenaire) throw new NotFoundException();
+    if (!partner) throw new NotFoundException();
 
 
-    const existingPartenaire = await this.prismaService.partner.findFirst({
+    const existingPartner = await this.prismaService.partner.findFirst({
       where: {
         deletedAt: null,
         id: {
@@ -162,19 +179,19 @@ export class PartenaireService {
       },
     });
 
-    if (existingPartenaire) {
-      if (existingPartenaire.email === updatePartnerDto.email && existingPartenaire.name === updatePartnerDto.namePartner) {
+    if (existingPartner) {
+      if (existingPartner.email === updatePartnerDto.email && existingPartner.name === updatePartnerDto.namePartner) {
         throw new ConflictException("Cet email et ce nom d'entreprise sont déjà utilisés.");
-      } else if (existingPartenaire.email === updatePartnerDto.email) {
+      } else if (existingPartner.email === updatePartnerDto.email) {
         throw new ConflictException('Cet email est déjà utilisé.');
-      } else if (existingPartenaire.name === updatePartnerDto.namePartner) {
+      } else if (existingPartner.name === updatePartnerDto.namePartner) {
         throw new ConflictException('Ce nom d’entreprise est déjà utilisé.');
       }
     }
 
 
 
-    const PartenaireUpdate = await this.prismaService.partner.update({
+    const partnerUpdate = await this.prismaService.partner.update({
       where: {
         id: id
       },
@@ -184,10 +201,10 @@ export class PartenaireService {
       }
     });
 
-    return PartenaireUpdate
+    return partnerUpdate
   }
 
-  async softDeletePartenaire(id: string) {
+  async softDeletePartner(id: string) {
     return this.prismaService.partner.update({
       where: { id },
       data: {

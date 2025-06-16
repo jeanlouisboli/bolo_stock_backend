@@ -16,7 +16,7 @@ export class CreateProductDto {
   @Matches(/^[a-fA-F0-9]{24}$/, {
     message: 'categorieId doit être un ObjectId MongoDB valide (24 caractères hexadécimaux)',
   })
-  categorieId: string;
+  categoryId: string;
 
   @ApiProperty()
   @IsNumber()

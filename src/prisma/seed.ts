@@ -1,37 +1,52 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, TypeUser } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
 async function main() {
   // Étape 1 : Créer un typePartenaire
-  const typePartenaire = await prisma.typePartenaire.create({
+  const typePartenaire = await prisma.typePartner.create({
     data: {
       libelle: 'Super marché',
     },
   });
 
-  // Étape 2 : Hasher un mot de passe
-  const hashedPassword = await bcrypt.hash('MotDePasseFort123!', 10);
-
-  // Étape 3 : Créer le partenaire associé
-  const partenaire = await prisma.partenaire.create({
+ 
+  // Étape 2 : Créer le partenaire associé
+  const partner = await prisma.partner.create({
     data: {
       name: 'Technologie Abidjan SARL',
-      typePartenaireId: typePartenaire.id, // association avec l'objet précédent
+      typePartnerId: typePartenaire.id, // association avec l'objet précédent
       email: 'contact@techci.ci',
-      adresse: 'Cocody, Rue des Jardins',
-      ville: 'Abidjan',
-      pays: 'Côte d\'Ivoire',
-      username: 'contact@techci.ci',
-      password: hashedPassword,
+      adress: 'Cocody, Rue des Jardins',
+      city: 'Abidjan',
+      country: 'Côte d\'Ivoire',
       latitude: 5.3480,
       longitude: -4.0075,
     },
   });
 
+   // Étape 3 : Hasher un mot de passe
+  const hashedPassword = await bcrypt.hash('MotDePasseFort123!', 10);
+
+
+  // Étape 4 : Créer le partenaire associé
+  const user = await prisma.user.create({
+    data: {
+      name: 'Technologie Abidjan SARL',
+      phone:'+225 0101030405',
+      email: partner.email,
+      password: hashedPassword,
+      type_user: TypeUser.CLIENT,
+      partnerId:partner.id
+
+    },
+  });
+
   console.log('✅ TypePartenaire créé :', typePartenaire);
-  console.log('✅ Partenaire créé :', partenaire);
+  console.log('✅ Partenaire créé :', partner);
+  console.log('✅ User créé :', user);
+
 }
 
 main()

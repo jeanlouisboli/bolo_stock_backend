@@ -9,6 +9,7 @@ import {
     IsLongitude,
     MinLength,
     Matches,
+    IsEnum,
   } from 'class-validator';
   
   /**
@@ -62,7 +63,7 @@ import {
     @Matches(/^[a-fA-F0-9]{24}$/, {
         message: 'typePartenaireId doit être un ObjectId MongoDB valide (24 caractères hexadécimaux)',
       })
-    typePartenaireId: string;
+    typePartnerId: string;
   
     /**
      * Nom d'utilisateur unique pour se connecter (obligatoire)
@@ -78,9 +79,10 @@ import {
      */
     @ApiProperty()
     @IsString()
-    @Matches(/^[a-fA-F0-9]{10}$/, {
-        message: 'phone doit être de 10 caractères)',
-      })
+    // @Matches(/^[a-fA-F0-9]{14}$/, {
+    //     message: 'phone doit être de 14 caractères',
+    //   })
+    @MinLength(14, { message: 'Phone doit contenir 14 caractères.' })
     phone: string;
 
 
@@ -95,15 +97,14 @@ import {
 
 
 
-    /**
-     * Type de commerce (ex: supermarché, boutique, etc.) (obligatoire)
-     */
-    @ApiProperty()
-    @IsString()
-    @Matches(/^[a-fA-F0-9]{24}$/, {
-        message: 'typeUser doit parmi la liste',
-      })
-    typeUser: TypeUser;
+    // /**
+    //  * Type de commerce (ex: supermarché, boutique, etc.) (obligatoire)
+    //  */
+    // @ApiProperty()
+    // @IsEnum(TypeUser,{
+    //   message: 'typeUser doit être CLIENT, PARTENAIRE ou ADMIN'
+    // })
+    // typeUser: TypeUser;
 
     
   }

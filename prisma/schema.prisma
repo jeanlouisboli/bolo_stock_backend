@@ -39,6 +39,8 @@ model User {
   email     String   @unique
   password  String
   type_user TypeUser
+  partnerId String? @db.ObjectId
+  partner Partner? @relation(fields: [partnerId], references: [id])
 
   createdAt DateTime  @default(now())
   updatedAt DateTime?
@@ -69,7 +71,8 @@ model Partner {
   typePartner   TypePartner? @relation(fields: [typePartnerId], references: [id])
 
   product   Product[]
-  Promotion Promotion[]
+  promotion Promotion[]
+  user User[]
 
   @@map("t_partner")
 }

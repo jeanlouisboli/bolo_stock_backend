@@ -17,7 +17,7 @@ export class ProductsService {
         OR: [
           {
             libelle: createProductDto.libelle,
-            partenaireId: partenaireId
+            partnerId: partenaireId
           },
 
         ],
@@ -36,16 +36,16 @@ export class ProductsService {
         libelle: createProductDto.libelle,
         description: createProductDto.description,
         prix: createProductDto.prix,
-        partenaire: {
+        partner: {
           connect: { id: partenaireId },
         },
-        categorie: {
-          connect: { id: createProductDto.categorieId },
+        category: {
+          connect: { id: createProductDto.categoryId },
         },
       },
       include: {
-        partenaire: true,
-        categorie: true,
+        partner: true,
+        category: true,
       },
     
     });
@@ -79,9 +79,9 @@ export class ProductsService {
     };
   }
 
-  async findOne(partenaireId, id: string) {
+  async findOne(partnerId, id: string) {
 
-    const product = await this.prismaService.product.findUnique({ where: { id, partenaireId } });
+    const product = await this.prismaService.product.findUnique({ where: { id, partnerId } });
 
     if (!product) throw new NotFoundException();
 
@@ -90,23 +90,23 @@ export class ProductsService {
   }
 
 
-  async update(id: string, updateProductDto: UpdateProductDto, partenaireId) {
+  async update(id: string, updateProductDto: UpdateProductDto, partnerId) {
 
-    const product = await this.prismaService.product.findUnique({ where: { id, partenaireId } });
+    const product = await this.prismaService.product.findUnique({ where: { id, partnerId } });
 
     if (!product) throw new NotFoundException();
 
 
-   let existingCategorie = await this.prismaService.categorie.findFirst({
+   let existingCategory = await this.prismaService.category.findFirst({
       where: {
         deletedAt: null,
         OR: [
-          { id: updateProductDto.categorieId },
+          { id: updateProductDto.categoryId },
         ],
       },
     });
 
-    if (!existingCategorie) throw new NotFoundException();
+    if (!existingCategory) throw new NotFoundException("Cette categorie n'existe pas ");
 
 
     const existingProduct = await this.prismaService.product.findFirst({
@@ -141,25 +141,25 @@ export class ProductsService {
         libelle: updateProductDto.libelle,
         description: updateProductDto.description,
         prix: updateProductDto.prix,
-        partenaire: {
-          connect: { id: partenaireId },
+        partner: {
+          connect: { id: partnerId },
         },
-        categorie: {
-          connect: { id: updateProductDto.categorieId },
+        category: {
+          connect: { id: updateProductDto.categoryId },
         },
         updatedAt: new Date(),
       },
       include: {
-        partenaire: true,
-        categorie:true
+        partner: true,
+        category:true
       },
     });
 
   }
 
-  async softDeleteProduct(partenaireId, id: string) {
+  async softDeleteProduct(partnerId, id: string) {
     return this.prismaService.product.update({
-      where: { id, partenaireId },
+      where: { id, partnerId },
       data: {
         deletedAt: new Date(), // Marque comme supprimé
       },
