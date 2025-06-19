@@ -23,22 +23,17 @@ export class OrdersService {
       throw new ConflictException("Cette promotion n'existe pas.");
     }
 
-    let client = await this.prismaService.client.findUnique({
+    let user = await this.prismaService.user.findUnique({
       where: {
         deletedAt: null,
         email: createOrderDto.email
       },
     });
 
-    if (!client) {
+    if (!user) {
 
-      client = await this.prismaService.client.create({
-        data: {
-          nomClient: createOrderDto.nomClient,
-          numeroTelephone: createOrderDto.numeroTelephone,
-          email: createOrderDto.email
-        },
-      });
+      throw new ConflictException("Cet utilisateur n'existe pas.");
+      
 
     }
 
@@ -48,8 +43,8 @@ export class OrdersService {
     const order = await this.prismaService.orders.create({
       data: {
         ...orderData, // quantite, prix, montant
-        client: {
-          connect: { id: client.id },
+        user: {
+          connect: { id: user.id },
         },
         promotion: {
           connect: { id: promotionId },
@@ -72,12 +67,12 @@ export class OrdersService {
 
 
 
-    this.prismaService.partenaire.update({
+    this.prismaService.partner.update({
       where: {
-        id: existingPromotion.partenaireId
+        id: existingPromotion.partnerId
       },
       data: {
-        venteTotal: existingPromotion.stock - createOrderDto.montant
+        totalSale: existingPromotion.stock - createOrderDto.montant
       },
     });
 
@@ -124,9 +119,9 @@ export class OrdersService {
   }
 
 
-  async update(id: string, updateOrderDto: UpdateOrderDto, partenaireId) {
+  async update(id: string, updateOrderDto: UpdateOrderDto, partnerId) {
 
-    const product = await this.prismaService.product.findUnique({ where: { id, partenaireId } });
+    const product = await this.prismaService.product.findUnique({ where: { id, partnerId } });
 
     if (!product) throw new NotFoundException();
 
@@ -161,12 +156,12 @@ export class OrdersService {
       },
       data: {
         ...updateOrderDto,
-        partenaire: {
-          connect: { id: partenaireId },
+        partner: {
+          connect: { id: partnerId },
         },
       },
       include: {
-        partenaire: true,
+        partner: true,
       },
     });
 

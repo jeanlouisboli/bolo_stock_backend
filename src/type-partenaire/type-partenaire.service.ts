@@ -11,7 +11,7 @@ export class TypePartenaireService {
   async create(createTypePartenaireDto: CreateTypePartenaireDto) {
   
    
-      const existingCategorie = await this.prismaService.categorie.findFirst({
+      const existingTypePartenaire = await this.prismaService.typePartner.findFirst({
         where: {
           deletedAt: null,
           OR: [
@@ -22,9 +22,9 @@ export class TypePartenaireService {
   
   
     
-      if (existingCategorie) {
+      if (existingTypePartenaire) {
   
-        throw new ConflictException('Ce type de partenaire  est déjà utilisé.');
+        throw new ConflictException('Ce type de partenaire est déjà utilisé.');
   
   
       }
@@ -32,7 +32,7 @@ export class TypePartenaireService {
   
   
   
-      const typePartenaire = await this.prismaService.typePartenaire.create({
+      const typePartenaire = await this.prismaService.typePartner.create({
   
         data: {
           libelle: createTypePartenaireDto.libelle,
@@ -42,7 +42,7 @@ export class TypePartenaireService {
   
   
       return {
-        message: 'Categorie créé',
+        message: 'Type de partenaire créé',
         typePartenaire,
   
       };
@@ -56,17 +56,17 @@ export class TypePartenaireService {
   
       // Si pas de pagination → renvoyer tous les Partenaires
       if (!page || !limit) {
-        const data = await this.prismaService.typePartenaire.findMany({ where });
+        const data = await this.prismaService.typePartner.findMany({ where });
         return { data, total: data.length, page: 1, limit: data.length, lastPage: 1 };
       }
   
       const [data, total] = await Promise.all([
-        this.prismaService.typePartenaire.findMany({
+        this.prismaService.typePartner.findMany({
           where,
           skip: (page - 1) * limit,
           take: limit,
         }),
-        this.prismaService.typePartenaire.count({ where }),
+        this.prismaService.typePartner.count({ where }),
       ]);
   
       return {
@@ -81,7 +81,7 @@ export class TypePartenaireService {
   
     async findOne(id: string) {
   
-      const typePartenaire = await this.prismaService.typePartenaire.findUnique({ where: { id } });
+      const typePartenaire = await this.prismaService.typePartner.findUnique({ where: { id } });
   
       if (!typePartenaire) throw new NotFoundException();
   
@@ -93,12 +93,12 @@ export class TypePartenaireService {
   
      async update(id: string, updateTypePartenaireDto: UpdateTypePartenaireDto) {
     
-        const typePartenaire = await this.prismaService.typePartenaire.findUnique({ where: { id } });
+        const typePartenaire = await this.prismaService.typePartner.findUnique({ where: { id } });
     
         if (!typePartenaire) throw new NotFoundException();
     
     
-        const existingTypePartenaire = await this.prismaService.typePartenaire.findFirst({
+        const existingTypePartenaire = await this.prismaService.typePartner.findFirst({
           where: {
             deletedAt: null,
             id: {
@@ -119,7 +119,7 @@ export class TypePartenaireService {
     
     
     
-        const typePartenaireUpdate = await this.prismaService.typePartenaire.update({
+        const typePartenaireUpdate = await this.prismaService.typePartner.update({
           where: {
             id: id
           },
@@ -133,7 +133,7 @@ export class TypePartenaireService {
       }
     
       async softDeleteTypePartenaire(id: string) {
-        return this.prismaService.categorie.update({
+        return this.prismaService.category.update({
           where: { id },
           data: {
             deletedAt: new Date(), // Marque comme supprimé

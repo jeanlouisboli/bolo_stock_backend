@@ -9,7 +9,7 @@ export class PromotionService {
 
     constructor(private prismaService: PrismaService) { }
 
-    async create(createPromotionDto: CreatePromotionDto, partenaireId) {
+    async create(createPromotionDto: CreatePromotionDto, partnerId) {
 
         let existingProduct = null;
         if(createPromotionDto.productId)
@@ -21,7 +21,7 @@ export class PromotionService {
                 },
             });
 
-            if (!existingProduct) throw new NotFoundException();
+            if (!existingProduct) throw new NotFoundException("Cet produit n'existe pas ");
 
         }else {
 
@@ -30,7 +30,7 @@ export class PromotionService {
                     deletedAt: null,
                     OR: [
                         { libelle: createPromotionDto.libelle,
-                          partenaireId : partenaireId
+                          partnerId : partnerId
                         },
                      
                       ],
@@ -46,12 +46,12 @@ export class PromotionService {
                         libelle: createPromotionDto.libelle,
                         description: createPromotionDto.description,
                         prix: createPromotionDto.prix,
-                        partenaire: {
-                            connect: { id: partenaireId },
+                        partner: {
+                            connect: { id: partnerId },
                         },
 
-                        categorie: {
-                            connect: { id: createPromotionDto.categorieId },
+                        category: {
+                            connect: { id: createPromotionDto.categoryId },
                         },
                     },
                 });
@@ -67,15 +67,15 @@ export class PromotionService {
                 remise: createPromotionDto.remise,
                 stock: createPromotionDto.stock,
                 seuil: createPromotionDto.seuil,
-                partenaire: {
-                    connect: { id: partenaireId },
+                partner: {
+                    connect: { id: partnerId },
                 },
                 product: {
                     connect: { id: existingProduct.id },
                 },
             },
             include: {
-                partenaire: true,
+                partner: true,
                 product: true
             },
         });
@@ -83,9 +83,9 @@ export class PromotionService {
         return promotion;
     }
 
-    async findAll(partenaireId, page?: number, limit?: number) {
+    async findAll(partnerId, page?: number, limit?: number) {
 
-        const where = { deletedAt: null, partenaireId: partenaireId };
+        const where = { deletedAt: null, partnerId: partnerId };
 
         // Si pas de pagination → renvoyer tous les Partenaires
         if (!page || !limit) {
@@ -99,7 +99,7 @@ export class PromotionService {
                 skip: (page - 1) * limit,
                 take: limit,
                 include: {
-                    partenaire: true,
+                    partner: true,
                     product: true
                 },
             }),
@@ -115,10 +115,10 @@ export class PromotionService {
         };
     }
 
-    async findOne(partenaireId, id: string) {
+    async findOne(partnerId, id: string) {
 
-        const promotion = await this.prismaService.promotion.findUnique({ where: { id, partenaireId },include: {
-            partenaire: true,
+        const promotion = await this.prismaService.promotion.findUnique({ where: { id, partnerId },include: {
+            partner: true,
             product: true
         }, });
 
@@ -132,12 +132,12 @@ export class PromotionService {
 
     }
 
-    async update(id: string, updatePromotionDto: UpdatePromotionDto, partenaireId) {
+    async update(id: string, updatePromotionDto: UpdatePromotionDto, partnerId) {
 
         let promotion = null;
-         promotion = await this.prismaService.promotion.findUnique({ where: { id, partenaireId } });
+         promotion = await this.prismaService.promotion.findUnique({ where: { id, partnerId } });
 
-        if (!promotion) throw new NotFoundException();
+        if (!promotion) throw new NotFoundException("Cette promotion n'existe pas !");
 
 
         let existingProduct = null;
@@ -149,7 +149,7 @@ export class PromotionService {
                     OR: [
                         {
                             libelle: updatePromotionDto.libelle,
-                            partenaireId: partenaireId
+                            partnerId: partnerId
                         },
     
                     ],
@@ -162,11 +162,11 @@ export class PromotionService {
                     description: updatePromotionDto.description,
                     
                     prix: updatePromotionDto.prix,
-                    partenaire: {
-                        connect: { id: partenaireId },
+                    partner: {
+                        connect: { id: partnerId },
                     },
-                    categorie: {
-                        connect: { id: updatePromotionDto.categorieId },
+                    category: {
+                        connect: { id: updatePromotionDto.categoryId },
                     },
                     
                 },
@@ -213,7 +213,7 @@ export class PromotionService {
                 
             },
             include: {
-                partenaire: true,
+                partner: true,
                 product:true
             },
         });
@@ -227,9 +227,9 @@ export class PromotionService {
 
     }
 
-    async softDeletePromotion(partenaireId, id: string) {
+    async softDeletePromotion(partnerId, id: string) {
         return this.prismaService.promotion.update({
-            where: { id, partenaireId },
+            where: { id, partnerId },
             data: {
                 deletedAt: new Date(), // Marque comme supprimé
             },

@@ -13,13 +13,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
+enum TypeUser {
   CLIENT
-  ENTREPRISE
+  PARTENAIRE
   ADMIN
 }
 
-model TypePartenaire {
+model TypePartner {
   id      String @id @default(auto()) @map("_id") @db.ObjectId
   libelle String
 
@@ -27,39 +27,57 @@ model TypePartenaire {
   updatedAt DateTime?
   deletedAt DateTime?
 
-  partenaire Partenaire[]
+  partner Partner[]
 
-  @@map("t_type_partenaire")
+  @@map("t_type_partner")
 }
 
-model Partenaire {
+model User {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  phone     String
+  email     String   @unique
+  password  String
+  type_user TypeUser
+  partnerId String? @db.ObjectId
+  partner Partner? @relation(fields: [partnerId], references: [id])
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime?
+  deletedAt DateTime?
+
+  Orders Orders[]
+
+  @@map("t_user")
+}
+
+model Partner {
   id   String @id @default(auto()) @map("_id") @db.ObjectId
   name String
 
-  adresse    String
-  pays       String
-  ville      String
-  email      String
-  latitude   Float?
-  longitude  Float?
-  username   String?   @unique
-  password   String?
-  approved   Boolean?
-  venteTotal Float?
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime?
-  deletedAt  DateTime?
+  adress    String
+  country   String
+  city      String
+  email     String
+  latitude  Float?
+  longitude Float?
+  approved  Boolean?
+  totalSale Float?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime?
+  deletedAt DateTime?
 
-  typePartenaireId String?         @db.ObjectId
-  typePartenaire   TypePartenaire? @relation(fields: [typePartenaireId], references: [id])
+  typePartnerId String?      @db.ObjectId
+  typePartner   TypePartner? @relation(fields: [typePartnerId], references: [id])
 
   product   Product[]
-  Promotion Promotion[]
+  promotion Promotion[]
+  user User[]
 
-  @@map("t_partenaire")
+  @@map("t_partner")
 }
 
-model Categorie {
+model Category {
   id      String @id @default(auto()) @map("_id") @db.ObjectId
   libelle String
 
@@ -69,7 +87,7 @@ model Categorie {
 
   product Product[]
 
-  @@map("t_categorie")
+  @@map("t_category")
 }
 
 model Product {
@@ -79,11 +97,11 @@ model Product {
   prix        Int?
   imagePath   String?
 
-  partenaireId String     @db.ObjectId
-  partenaire   Partenaire @relation(fields: [partenaireId], references: [id])
+  partnerId String  @db.ObjectId
+  partner   Partner @relation(fields: [partnerId], references: [id])
 
-  categorieId String?    @db.ObjectId
-  categorie   Categorie? @relation(fields: [categorieId], references: [id])
+  categoryId String?   @db.ObjectId
+  category   Category? @relation(fields: [categoryId], references: [id])
 
   createdAt DateTime  @default(now())
   updatedAt DateTime?
@@ -103,8 +121,8 @@ model Promotion {
   seuil     Int
   statut    Boolean @default(true)
 
-  partenaireId String     @db.ObjectId
-  partenaire   Partenaire @relation(fields: [partenaireId], references: [id])
+  partnerId String  @db.ObjectId
+  partner   Partner @relation(fields: [partnerId], references: [id])
 
   productId String  @db.ObjectId
   product   Product @relation(fields: [productId], references: [id])
@@ -120,33 +138,18 @@ model Promotion {
   @@map("t_promotion")
 }
 
-model Client {
-  id              String @id @default(auto()) @map("_id") @db.ObjectId
-  nomClient       String
-  numeroTelephone String
-  email           String @unique
-
-  createdAt DateTime  @default(now())
-  updatedAt DateTime?
-  deletedAt DateTime?
-
-  Orders Orders[]
-
-  @@map("t_client")
-}
-
 model Orders {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  clientId String @db.ObjectId
-  client   Client @relation(fields: [clientId], references: [id])
+  userId String @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id])
 
   promotionId String    @db.ObjectId
   promotion   Promotion @relation(fields: [promotionId], references: [id])
 
   quantite Int
   prix     Int
-  montant  Float?
+  amount   Float?
 
   createdAt DateTime  @default(now())
   updatedAt DateTime?

@@ -11,9 +11,9 @@ import {
   Put,
 } from '@nestjs/common';
 import { PartenaireService } from './partenaire.service';
-import { CreatePartenaireDto } from './dto/create-partenaire.dto';
-import { UpdatePartenaireDto } from './dto/update-partenaire.dto';
-import { AddLocationPartenaireDto } from './dto/add-location-partenaire.dto';
+import { CreatePartnerDto } from './dto/create-partner.dto';
+import { UpdatePartnerDto } from './dto/update-partner.dto';
+import { AddLocationPartnerDto } from './dto/add-location-partner.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import {
   ApiTags,
@@ -28,18 +28,18 @@ import {
 @ApiTags('partenaire')
 @Controller('partenaire')
 export class PartenaireController {
-  constructor(private readonly PartenaireService: PartenaireService) { }
+  constructor(private readonly partenaireService: PartenaireService) { }
 
   @Post()
   @ApiOperation({ summary: 'Créer un nouveau magasin' })
   @ApiResponse({ status: 201, description: "Un nouveau partenaire a ete ajoute" })
   @ApiBody({
-    type: CreatePartenaireDto,
+    type: CreatePartnerDto,
     description: 'Json structure for Partenaire object',
   })
-  create(@Body() createPartenaireDto: CreatePartenaireDto) {
-    return createPartenaireDto;
-    // return this.PartenaireService.create(createPartenaireDto);
+  create(@Body() createPartnerDto: CreatePartnerDto) {
+   // return createPartnerDto;
+    return this.partenaireService.create(createPartnerDto);
   }
 
 
@@ -50,14 +50,14 @@ export class PartenaireController {
   @ApiOperation({ summary: 'Ajouter une localisation à un magasin' })
   @ApiParam({ name: 'id', type: Number, description: 'ID du magasin' })
   @ApiBody({
-    type: AddLocationPartenaireDto,
+    type: AddLocationPartnerDto,
     description: 'Json structure for user object',
   })
   addLocationPartenaire(
     @Param('id', ParseIntPipe) id: string,
-    @Body() addLocationPartenaireDto: AddLocationPartenaireDto,
+    @Body() addLocationPartnerDto: AddLocationPartnerDto,
   ) {
-    return this.PartenaireService.addLocationPartenaire(id, addLocationPartenaireDto);
+    return this.partenaireService.addLocationPartner(id, addLocationPartnerDto);
   }
 
 
@@ -74,7 +74,7 @@ export class PartenaireController {
   ) {
     const parsedPage = page ? Number(page) : undefined;
     const parsedLimit = limit ? Number(limit) : undefined;
-    return this.PartenaireService.findAll(parsedPage, parsedLimit);
+    return this.partenaireService.findAll(parsedPage, parsedLimit);
   }
 
 
@@ -84,7 +84,7 @@ export class PartenaireController {
   @ApiOperation({ summary: 'Récupérer un magasin par son ID' })
   @ApiParam({ name: 'id', type: Number, description: 'ID du magasin' })
   findOne(@Param('id', ParseIntPipe) id: string) {
-    return this.PartenaireService.findOne(id);
+    return this.partenaireService.findOne(id);
   }
 
 
@@ -94,14 +94,14 @@ export class PartenaireController {
   @ApiOperation({ summary: 'Mettre à jour un magasin' })
   @ApiParam({ name: 'id', type: String, description: 'ID du magasin' })
   @ApiBody({
-    type: CreatePartenaireDto,
+    type: CreatePartnerDto,
     description : 'Json structure for Partenaire object'
   })
   update(
     @Param('id', ParseIntPipe) id: string,
-    @Body() updatePartenaireDto: UpdatePartenaireDto,
+    @Body() updatePartnerDto: UpdatePartnerDto,
   ) {
-    return this.PartenaireService.update(id, updatePartenaireDto);
+    return this.partenaireService.update(id, updatePartnerDto);
   }
 
 
@@ -114,7 +114,7 @@ export class PartenaireController {
   @ApiParam({ name: 'id', type: Number, description: 'ID du magasin' })
   @ApiResponse({status:201, description:"Parteniare supprimé"})
   remove(@Param('id', ParseIntPipe) id: string) {
-    return this.PartenaireService.softDeletePartenaire(id);
+    return this.partenaireService.softDeletePartner(id);
   }
 
 

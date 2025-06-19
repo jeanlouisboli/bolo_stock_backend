@@ -17,18 +17,18 @@ export class AuthController {
    })
   @Post('login')
   async login(@Body() loginDto: LoginAuthDto) {
-  const partenaire = await this.authService.validatPartenaire(loginDto.username, loginDto.password);
+  const user = await this.authService.validatUser(loginDto.username, loginDto.password);
 
-  if (!partenaire) {
+  if (!user) {
     throw new UnauthorizedException('Identifiants invalides');
   }
 
-  const token = await this.authService.generateTempToken(partenaire.id, partenaire.username,"1h"); // ou user payload
+  const token = await this.authService.generateTempToken(user.id, user.email,"1h"); // ou user payload
 
   return {
     message: 'Connexion réussie',
     token,
-    partenaire
+    user
   };
 }
 
