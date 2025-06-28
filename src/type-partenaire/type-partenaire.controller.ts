@@ -21,10 +21,12 @@ export class TypePartenaireController {
     type: CreateTypePartenaireDto,
     description: 'Json structure for type partenaire object',
   })
+  @UseGuards(AuthGuard('jwt'))
   @Post()
   create(@Body() createTypePartenaireDto: CreateTypePartenaireDto, @Req() req: Request) {
 
-    // const user = req.user as JwtUser; // typage ici
+     const user = req.user as JwtUser; // typage ici
+     return user ;
     // const partenaireId = user.partenaireId;
     console.log('Requête reçue avec body:', createTypePartenaireDto);
     return this.typePartenaireService.create(createTypePartenaireDto);
