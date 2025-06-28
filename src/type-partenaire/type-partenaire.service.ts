@@ -52,11 +52,14 @@ export class TypePartenaireService {
   
     async findAll(page?: number, limit?: number) {
   
+       
       const where = { deletedAt: null };
-  
+      
+      
       // Si pas de pagination → renvoyer tous les Partenaires
       if (!page || !limit) {
         const data = await this.prismaService.typePartner.findMany({ where });
+       
         return { data, total: data.length, page: 1, limit: data.length, lastPage: 1 };
       }
   
