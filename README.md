@@ -31,6 +31,18 @@
 ```bash
 $ npm install
 $ npx prisma db push
+$ sudo systemctl stop mongod
+$ sudo nano /usr/local/etc/mongod.conf ou sudo nano /opt/homebrew/etc/mongod.conf
+$ replication:
+$  replSetName: "rs0"
+$ sudo systemctl start mongod
+$ mongo
+$ rs.initiate()
+$ rs.status()
+
+
+
+
 ```
 
 ## Compile and run the project
