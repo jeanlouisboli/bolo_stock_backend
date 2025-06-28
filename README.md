@@ -30,6 +30,7 @@
 
 ```bash
 $ npm install
+$ npx prisma db push
 ```
 
 ## Compile and run the project
