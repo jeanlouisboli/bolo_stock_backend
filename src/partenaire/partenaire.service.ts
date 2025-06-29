@@ -24,7 +24,7 @@ export class PartenaireService {
         ],
       },
     });
-    if(existingTypePartner){
+    if(!existingTypePartner){
       throw new NotFoundException("Ce type de partenaire est inexistant !")
     }
 
