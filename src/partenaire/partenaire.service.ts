@@ -24,7 +24,7 @@ export class PartenaireService {
         ],
       },
     });
-    if(existingTypePartner){
+    if(!existingTypePartner){
       throw new NotFoundException("Ce type de partenaire est inexistant !")
     }
 
@@ -51,8 +51,31 @@ export class PartenaireService {
       } else if (existingPartenaire.email === createPartnerDto.email) {
         throw new ConflictException('Cet email est déjà utilisé.');
       }
-    
+  
+    }
 
+
+
+    // Vérifie si un utilisateur avec cet email ou username existe déjà
+    const existingUser = await this.prismaService.user.findFirst({
+      where: {
+        deletedAt: null,
+        OR: [
+          { name: createPartnerDto.nameUser },
+        
+        ],
+      },
+    });
+
+
+   
+
+    
+    if (existingUser) {
+      if (existingUser.name === createPartnerDto.nameUser) {
+        throw new ConflictException("Ce nom d'utilisateur est déjà utilisés.");
+      } 
+  
     }
 
 
@@ -84,7 +107,8 @@ export class PartenaireService {
         email: createPartnerDto.email,
         password: hashedPassword,
         type_user:  TypeUser.PARTENAIRE,
-        partnerId: partner.id
+        partnerId: partner.id,
+        deletedAt: null
       }
     })
 
